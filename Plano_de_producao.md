@@ -31,7 +31,7 @@ Uma abstração só deve ser criada quando resolver um problema concreto do proj
 - [x] Separar a lógica da blockchain da API Flask
 - [x] Criar `Block`
 - [x] Criar `Transaction`
-- [x] Criar configuração central da MRC
+- [x] Criar configuração central da STL
 - [x] Manter o código simples e documentado
 - [x] Criar testes básicos
 
@@ -91,12 +91,12 @@ Implementar:
 Exemplo:
 
 ```text
-Alice possui 100 MRC
+Alice possui 100 STL
 
         ↓ envia 30
 
-Bob       30 MRC
-Alice     70 MRC
+Bob       30 STL
+Alice     70 STL
 ```
 
 **Resultado esperado:** a blockchain passa a controlar propriedade de moedas, e não apenas registrar transferências.
@@ -163,15 +163,15 @@ Carteira
 
 ---
 
-## FASE 5 — Economia da MRC
+## FASE 5 — Economia da STL
 
-**Objetivo:** definir as regras monetárias da MariaCoin.
+**Objetivo:** definir as regras monetárias da Stella.
 
 Definir:
 
 ```text
-Nome: MariaCoin
-Símbolo: MRC
+Nome: Stella
+Símbolo: STL
 Supply máximo: definido pelo projeto
 ```
 
@@ -182,7 +182,7 @@ Implementar:
 - [ ] Recompensa de mineração
 - [ ] Controle do supply
 - [ ] Impossibilidade de criação arbitrária de moedas
-- [ ] Unidades e fracionamento da MRC
+- [ ] Unidades e fracionamento da STL
 
 Constantes poderão incluir, quando necessárias:
 
@@ -191,13 +191,13 @@ MAX_SUPPLY
 BLOCK_REWARD
 ```
 
-**Resultado esperado:** a MRC possui uma política monetária determinística.
+**Resultado esperado:** a STL possui uma política monetária determinística.
 
 ---
 
 ## FASE 6 — Mineração / Proof of Work
 
-A blockchain atual já possui uma versão inicial de Proof of Work. Nesta fase, ela será integrada às regras monetárias da MRC.
+A blockchain atual já possui uma versão inicial de Proof of Work. Nesta fase, ela será integrada às regras monetárias da STL.
 
 Implementar:
 
@@ -219,7 +219,7 @@ encontra Proof
    ↓
 bloco válido
    ↓
-recebe MRC
+recebe STL
 ```
 
 ---
