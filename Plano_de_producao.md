@@ -27,7 +27,7 @@ Uma abstração só deve ser criada quando resolver um problema concreto do proj
 
 **Objetivo:** organizar o projeto antes de aumentar sua complexidade.
 
-- [ ] Definir estrutura de pastas
+- [-] Definir estrutura de pastas
 - [ ] Separar a lógica da blockchain da API Flask
 - [ ] Criar `Block`
 - [ ] Criar `Transaction`
