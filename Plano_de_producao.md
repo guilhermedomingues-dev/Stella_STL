@@ -58,7 +58,7 @@ Implementar:
 - [x] Criação de blocos
 - [x] Hash SHA-256
 - [x] Referência ao bloco anterior
-- [ ] Validação individual de blocos
+- [x] Validação individual de blocos
 - [x] Validação da cadeia
 
 **Resultado esperado:** blockchain estruturalmente consistente.
