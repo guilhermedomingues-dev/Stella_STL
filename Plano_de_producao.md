@@ -28,12 +28,12 @@ Uma abstração só deve ser criada quando resolver um problema concreto do proj
 **Objetivo:** organizar o projeto antes de aumentar sua complexidade.
 
 - [x] Definir estrutura de pastas
-- [ ] Separar a lógica da blockchain da API Flask
-- [ ] Criar `Block`
-- [ ] Criar `Transaction`
-- [ ] Criar configuração central da MRC
-- [ ] Manter o código simples e documentado
-- [ ] Criar testes básicos
+- [x] Separar a lógica da blockchain da API Flask
+- [x] Criar `Block`
+- [x] Criar `Transaction`
+- [x] Criar configuração central da MRC
+- [x] Manter o código simples e documentado
+- [x] Criar testes básicos
 
 **Resultado esperado:** o código atual continua funcionando, mas deixa de concentrar todas as responsabilidades em um único arquivo.
 
