@@ -1,8 +1,8 @@
-# MariaCoin (MRC) — Plano de Produção
+# Stella (STL) — Plano de Produção
 
 ## Objetivo
 
-Construir a MariaCoin (MRC), uma criptomoeda própria baseada nos princípios tecnológicos fundamentais do Bitcoin, com finalidade educacional.
+Construir a Stella (STL), uma criptomoeda própria baseada nos princípios tecnológicos fundamentais do Bitcoin, com finalidade educacional.
 
 O projeto não tem como objetivo listagem em bolsa, investimento ou especulação. O objetivo é construir e compreender a tecnologia por trás de uma criptomoeda funcional.
 
@@ -55,11 +55,11 @@ previous_hash
 
 Implementar:
 
-- [ ] Criação de blocos
-- [ ] Hash SHA-256
-- [ ] Referência ao bloco anterior
+- [x] Criação de blocos
+- [x] Hash SHA-256
+- [x] Referência ao bloco anterior
 - [ ] Validação individual de blocos
-- [ ] Validação da cadeia
+- [x] Validação da cadeia
 
 **Resultado esperado:** blockchain estruturalmente consistente.
 
