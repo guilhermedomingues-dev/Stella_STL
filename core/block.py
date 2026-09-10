@@ -4,28 +4,24 @@ Funções relacionadas à estrutura de um bloco individual da blockchain.
 
 import hashlib
 import json
-from operator import index
 from time import time
 
-def new_block(self, proof, previous_hash=None):
+def new_block(index, transactions, proof, previous_hash=None):
     """
-    Cria um novo bloco e o adiciona à blockchain
+    Cria a estrutura de um novo bloco
+    :param index: <int> Índice do bloco
+    :param transactions: <list> Transações incluídas no bloco
     :param proof: <int> Prova encontrada pelo algoritmo de PoW
     :param previous_hash: (Opcional) <str> Hash do bloco anterior
-    :return: <dict> Novo bloco criado
+    :return: <dict> Bloco criado
     """
-    block = {
-        'index': len(self.chain) + 1,
+    return {
+        'index': index,
         'timestamp': time(),
-        'transactions': self.current_transactions,
+        'transactions': transactions,
         'proof': proof,
-        'previous_hash': previous_hash or self.hash(self.chain[-1]),
+        'previous_hash': previous_hash,
     }
-
-    # Limpa a lista de transações pendentes após incluí-las no novo bloco
-    self.current_transactions = []
-    self.chain.append(block)
-    return block
 
 def hash(block):
     """
@@ -37,3 +33,28 @@ def hash(block):
     # Garante que as chaves do dicionário sejam ordenadas para que o mesmo bloco sempre gere o mesmo hash
     block_string = json.dumps(block, sort_keys=True).encode()
     return hashlib.sha256(block_string).hexdigest()
+
+def valid_block(block):
+    """Verifica se um bloco possui estrutura e tipos de dados válidos."""
+
+    required_fields = ['index', 'timestamp', 'transactions', 'proof', 'previous_hash']
+
+    if not all(field in block for field in required_fields):
+        return False
+
+    if not isinstance(block['index'], int):
+        return False
+
+    if not isinstance(block['timestamp'], (int, float)):
+        return False
+
+    if not isinstance(block['transactions'], list):
+        return False
+
+    if not isinstance(block['proof'], int):
+        return False
+
+    if not isinstance(block['previous_hash'], (int, str)):
+        return False
+
+    return True
