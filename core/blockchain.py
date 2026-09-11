@@ -21,10 +21,6 @@ class Blockchain(object):
     def new_block(self, index, proof, previous_hash=None):
         """
         Cria um novo bloco e o adiciona à blockchain
-        :param index: <int> Índice do bloco
-        :param proof: <int> Prova encontrada pelo algoritmo de PoW
-        :param previous_hash: (Opcional) <str> Hash do bloco anterior
-        :return: <dict> Novo bloco criado
         """
         block = {
             'index': index,
