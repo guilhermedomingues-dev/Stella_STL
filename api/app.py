@@ -1,3 +1,5 @@
+from core.block import new_block, hash
+from core.transaction import new_transaction as create_transaction
 from core.blockchain import Blockchain
 from network.node import generate_node_id
 from uuid import uuid4
@@ -13,6 +15,12 @@ node_identifier = str(uuid4()).replace('-', '')
 # Cria uma instância da blockchain que será utilizada por este nó
 blockchain = Blockchain()
 
+# Cria a lista de UTXOs disponíveis para serem utilizados nas transações.
+available_utxos = []
+
+# Cria a lista de UTXOs que já foram consumidos.
+spent_utxos = []
+
 @app.route('/mine', methods=['GET'])
 def mine():
     # Executa o PoW usando a prova do último bloco para encontrar a próxima prova
@@ -22,15 +30,13 @@ def mine():
 
     # O nó recebe uma recompensa por encontrar uma prova válida.
     # O remetente é "0" para indicar que a moeda foi criada como recompensa pela mineração deste bloco.
-    blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1,
-    )
+    
+    """transaction = create_transaction("0", node_identifier, 1)"""  # Cria a transação de recompensa pela mineração.
+    """blockchain.current_transactions.append(transaction)"""
 
     # Cria o novo bloco utilizando a prova encontrada e o hash do bloco anterior
-    previous_hash = blockchain.hash(last_block)
-    block = blockchain.new_block(proof, previous_hash)
+    previous_hash = hash(last_block)
+    block = blockchain.add_block(proof, previous_hash)
 
     response = {
         'message': "New Block Forged",
@@ -43,17 +49,38 @@ def mine():
   
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
+    # Obtém os dados enviados na requisição.
     values = request.get_json()
 
-    # Verifica se todos os campos obrigatórios foram enviados na requisição
-    required = ['sender', 'recipient', 'amount']
+    # Verifica se os campos obrigatórios foram enviados.
+    required = ['inputs', 'outputs']
     if not all(k in values for k in required):
+        # Retorna erro caso algum campo obrigatório esteja ausente.
         return 'Missing values', 400
 
-    # Cria uma nova transação e informa em qual bloco ela será incluída
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    # Cria a transação utilizando os UTXOs disponíveis e gastos.
+    transaction = create_transaction(
+        values['inputs'],
+        values['outputs'],
+        available_utxos,
+        spent_utxos
+    )
 
+    # Verifica se a transação foi rejeitada.
+    if transaction is None:
+        # Retorna erro caso os UTXOs ou valores sejam inválidos.
+        return 'Invalid transaction', 400
+
+    # Adiciona a transação válida à lista de transações pendentes.
+    blockchain.current_transactions.append(transaction)
+
+    # Calcula o índice do próximo bloco que receberá a transação.
+    index = blockchain.last_block['index'] + 1
+
+    # Cria a resposta informando o bloco da transação.
     response = {'message': f'Transaction will be added to Block {index}'}
+
+    # Retorna a resposta em formato JSON com status 201.
     return jsonify(response), 201
 
 @app.route('/chain', methods=['GET'])
