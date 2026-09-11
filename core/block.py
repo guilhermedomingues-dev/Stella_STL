@@ -9,11 +9,6 @@ from time import time
 def new_block(index, transactions, proof, previous_hash=None):
     """
     Cria a estrutura de um novo bloco
-    :param index: <int> Índice do bloco
-    :param transactions: <list> Transações incluídas no bloco
-    :param proof: <int> Prova encontrada pelo algoritmo de PoW
-    :param previous_hash: (Opcional) <str> Hash do bloco anterior
-    :return: <dict> Bloco criado
     """
     return {
         'index': index,
