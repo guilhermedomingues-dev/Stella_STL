@@ -79,14 +79,14 @@ Transaction
 
 Implementar:
 
-- [ ] UTXO
-- [ ] Criação de outputs
-- [ ] Consumo de UTXOs
-- [ ] Troco
-- [ ] Identificação única de transações
-- [ ] Prevenção de gasto duplo
-- [ ] Validação de valores
-- [ ] Cálculo de saldo
+- [x] UTXO
+- [x] Criação de outputs
+- [x] Consumo de UTXOs
+- [x] Troco
+- [x] Identificação única de transações
+- [x] Prevenção de gasto duplo
+- [x] Validação de valores
+- [x] Cálculo de saldo
 
 Exemplo:
 

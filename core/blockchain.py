@@ -19,21 +19,6 @@ class Blockchain(object):
         # Cria o bloco gênese da blockchain.
         self.chain.append(new_block(index=1, transactions=[], proof=100, previous_hash=1))
 
-<<<<<<< HEAD
-    def new_block(self, index, proof, previous_hash=None):
-        """
-        Cria um novo bloco e o adiciona à blockchain
-        """
-        block = {
-            'index': index,
-            'timestamp': time(),
-            'transactions': self.current_transactions,
-            'proof': proof,
-            'previous_hash': previous_hash or self.hash(self.chain[-1]),
-        }
-
-        # Limpa a lista de transações pendentes após incluí-las no novo bloco
-=======
     def add_block(self, proof, previous_hash=None):
         # Cria um novo bloco com as transações pendentes.
         block = new_block(
@@ -42,8 +27,7 @@ class Blockchain(object):
             proof=proof,
             previous_hash=previous_hash
         )
-        # Limpa as transações pendentes após adicioná-las ao bloco.
->>>>>>> 706eae1 (correção de erros e adicionar UTXO)
+        # Limpa a lista de transações pendentes após adicioná-las ao bloco.
         self.current_transactions = []
         # Adiciona o novo bloco à blockchain.
         self.chain.append(block)
@@ -95,21 +79,5 @@ class Blockchain(object):
 
     @property
     def last_block(self):
-<<<<<<< HEAD
-        return self.chain[-1]
-
-    @staticmethod
-    def hash(block):
-            """
-            Gera o hash SHA-256 de um bloco
-            :param block: <dict> Bloco que será transformado em hash
-            :return: <str> Hash do bloco
-            """
-
-            # Garante que as chaves do dicionário sejam ordenadas para que o mesmo bloco sempre gere o mesmo hash
-            block_string = json.dumps(block, sort_keys=True).encode()
-            return hashlib.sha256(block_string).hexdigest()
-=======
         # Retorna o último bloco da blockchain.
         return self.chain[-1]
->>>>>>> 706eae1 (correção de erros e adicionar UTXO)
