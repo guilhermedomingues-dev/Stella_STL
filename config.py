@@ -1,10 +1,15 @@
 """
-Configuração central da MariaCoin (MRC).
+Configuração central da Stella (STL).
 """
-
-# Prefixo que o hash precisa ter para a Proof of Work ser considerada válida
-POW_DIFFICULTY = "0000"
 
 # Configuração padrão do servidor Flask
 DEFAULT_HOST = "0.0.0.0"
 DEFAULT_PORT = 5000
+
+MAX_SUPPLY = 20_000_000
+INITIAL_SUPPLY = 0
+BLOCK_REWARD = 50
+SAINTS_PER_STL = 100_000_000
+DIFFICULTY = 4
+BLOCK_REWARD = 50
+HALVING_INTERVAL = 262800

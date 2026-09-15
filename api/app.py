@@ -3,6 +3,7 @@ from core.transaction import new_transaction as create_transaction
 from core.blockchain import Blockchain
 from network.node import generate_node_id
 from uuid import uuid4
+from core.transaction import valid_transaction
 
 from flask import Flask, jsonify, request
 
@@ -18,20 +19,19 @@ spent_utxos = []
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    last_block = blockchain.last_block
-    last_proof = last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
+    block = blockchain.mine_block()
 
-    previous_hash = hash(last_block)
-    block = blockchain.add_block(proof, previous_hash)
+    if block is None:
+        return 'Invalid proof', 400
 
     response = {
-        'message': "New Block Forged",
+        'message': 'New Block Forged',
         'index': block['index'],
         'transactions': block['transactions'],
         'proof': block['proof'],
         'previous_hash': block['previous_hash'],
     }
+
     return jsonify(response), 200
 
 
@@ -66,8 +66,9 @@ def new_transaction():
 def full_chain():
     response = {
         'chain': blockchain.chain,
-        'length': len(blockchain.chain),
+        'length': len(blockchain.chain)
     }
+
     return jsonify(response), 200
 
 
@@ -106,6 +107,35 @@ def consensus():
 
     return jsonify(response), 200
 
+@app.route('/transactions/receive', methods=['POST'])
+def receive_transaction():
+    transaction = request.get_json()
+
+    if not valid_transaction(transaction, blockchain.available_utxos):
+        return jsonify({
+            'message': 'Invalid transaction'
+        }), 400
+
+    blockchain.current_transactions.append(transaction)
+
+    return jsonify({
+        'message': 'Transaction received'
+    }), 200
+
+@app.route('/blocks/receive', methods=['POST'])
+def receive_block():
+    block = request.get_json()
+
+    if not blockchain.valid_received_block(block):
+        return jsonify({
+            'message': 'Invalid block'
+        }), 400
+
+    blockchain.chain.append(block)
+
+    return jsonify({
+        'message': 'Block received'
+    }), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -12,23 +12,15 @@ def register_node(self, address):
 
 
 def resolve_conflicts(self):
-    neighbours = self.nodes
-    new_chain = None
-    max_length = len(self.chain)
-
-    for node in neighbours:
+    for node in self.nodes:
         response = requests.get(f'http://{node}/chain')
 
-        if response.status_code == 200:
-            length = response.json()['length']
-            chain = response.json()['chain']
+        if response.status_code != 200:
+            continue
 
-            if length > max_length and self.valid_chain(chain):
-                max_length = length
-                new_chain = chain
+        chain = response.json()['chain']
 
-    if new_chain:
-        self.chain = new_chain
-        return True
+        if self.choose_chain(chain):
+            return True
 
     return False

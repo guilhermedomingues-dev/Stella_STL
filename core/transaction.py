@@ -19,6 +19,9 @@ def new_transaction(inputs, outputs, available_utxos, spent_utxos):
         if not valid_utxo(utxo, available_utxos):
             return None
 
+    if any(output['amount'] <= 0 for output in outputs):
+        return None
+
     input_amount = sum(utxo['amount'] for utxo in inputs)
     output_amount = sum(output['amount'] for output in outputs)
 
@@ -67,4 +70,39 @@ def verify_transaction(public_key, transaction):
     signature = bytes.fromhex(data.pop('signature'))
     message = str(data)
     verify_signature(public_key, message, signature)
+    return True
+
+
+def create_coinbase_transaction(miner_address, reward):
+    return {
+        'type': 'coinbase',
+        'inputs': [],
+        'outputs': [
+            {
+                'owner': miner_address,
+                'amount': reward
+            }
+        ]
+    }
+
+def valid_transaction(transaction, available_utxos):
+    inputs = transaction.get('inputs', [])
+    outputs = transaction.get('outputs', [])
+
+    if not inputs or not outputs:
+        return False
+
+    if any(output['amount'] <= 0 for output in outputs):
+        return False
+
+    for utxo in inputs:
+        if not valid_utxo(utxo, available_utxos):
+            return False
+
+    input_amount = sum(utxo['amount'] for utxo in inputs)
+    output_amount = sum(output['amount'] for output in outputs)
+
+    if output_amount > input_amount:
+        return False
+
     return True

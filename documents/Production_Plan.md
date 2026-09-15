@@ -251,17 +251,22 @@ Definir:
 ``` text
 Nome: Stella
 Símbolo: STL
-Supply máximo: definido pelo projeto
+Supply máximo: 20.000.000 STL
 ```
 
 Implementar:
 
--   [ ] Supply máximo
--   [ ] Emissão inicial
--   [ ] Recompensa de mineração
--   [ ] Controle do supply
--   [ ] Impossibilidade de criação arbitrária de moedas
--   [ ] Unidades e fracionamento da STL
+-   [x] Supply máximo (20.000.000 STL | Status: proposta inicial, ainda sujeita à validação junto aos demais parâmetros monetários.)
+-   [x] Emissão inicial (Emissão inicial: 0 STL no bloco gênese. | Primeira emissão: recompensa do primeiro bloco válido.)
+-   [x] Recompensa de mineração (50 STL por bloco.)
+-   [x] Controle do supply (O fornecimento de STL será determinado exclusivamente pelo protocolo, com emissão previsível e limitada. Nenhuma autoridade central poderá criar unidades arbitrariamente ou ultrapassar o supply máximo estabelecido.)
+-   [x] Impossibilidade de criação arbitrária de moedas (A criação de novos STL é exclusivamente determinada pelo protocolo. Nenhuma entidade possui autoridade para emitir moedas fora das regras de emissão, e qualquer bloco que viole essas regras deve ser rejeitado pela rede.)
+-   [x] Unidades e fracionamento da STL (A unidade principal da moeda é o STL (Stella), divisível em 100.000.000 unidades menores denominadas Saints. Um Saint corresponde a 10⁻⁸ STL e constitui a menor unidade indivisível da rede.)
+
+Supply máximo: 20.000.000 STL
+Bloco: a cada 10 minutos
+Recompensa inicial: 50 STL
+Halving: a cada 5 anos
 
 Constantes poderão incluir, quando necessárias:
 
@@ -282,13 +287,13 @@ fase, ela será integrada às regras monetárias da STL.
 
 Implementar:
 
--   [ ] Proof of Work
--   [ ] Dificuldade
--   [ ] Validação da prova
--   [ ] Mineração de blocos
--   [ ] Recompensa
--   [ ] Coinbase transaction
--   [ ] Regras de emissão
+-   [x] Proof of Work
+-   [x] Dificuldade
+-   [x] Validação da prova
+-   [x] Mineração de blocos
+-   [x] Recompensa
+-   [x] Coinbase transaction
+-   [x] Regras de emissão
 -   [ ] Ajuste de dificuldade, caso adotado pelo protocolo
 
 **Resultado esperado:**
@@ -311,12 +316,12 @@ recebe STL
 
 Implementar:
 
--   [ ] Nós
--   [ ] Descoberta/registro de nós
--   [ ] Propagação de transações
--   [ ] Propagação de blocos
--   [ ] Comunicação entre nós
--   [ ] Sincronização da blockchain
+-   [x] Nós
+-   [x] Descoberta/registro de nós
+-   [x] Propagação de transações
+-   [x] Propagação de blocos
+-   [x] Comunicação entre nós
+-   [x] Sincronização da blockchain
 
 Arquitetura conceitual:
 
@@ -340,13 +345,13 @@ fase, ele será transformado em regras completas do protocolo.
 
 Implementar:
 
--   [ ] Validação de blocos recebidos
--   [ ] Validação de transações recebidas
--   [ ] Escolha da cadeia válida
--   [ ] Resolução de conflitos
--   [ ] Sincronização de nós
--   [ ] Rejeição de blocos inválidos
--   [ ] Rejeição de transações inválidas
+-   [x] Validação de blocos recebidos
+-   [x] Validação de transações recebidas
+-   [x] Escolha da cadeia válida
+-   [x] Resolução de conflitos
+-   [x] Sincronização de nós
+-   [x] Rejeição de blocos inválidos
+-   [x] Rejeição de transações inválidas
 
 **Resultado esperado:** os nós conseguem manter um estado comum da rede.
 
@@ -358,16 +363,16 @@ Implementar:
 
 Testar:
 
--   [ ] Alteração de bloco antigo
--   [ ] Alteração de transação
--   [ ] Gasto duplo
--   [ ] Criação arbitrária de moedas
--   [ ] Gasto sem chave privada
--   [ ] Envio de valor inválido
--   [ ] Bloco com Proof of Work inválida
--   [ ] Bloco com hash anterior incorreto
--   [ ] Tentativas de manipulação de saldo
--   [ ] Transações inválidas propagadas pela rede
+-   [x] Alteração de bloco antigo
+-   [x] Alteração de transação
+-   [x] Gasto duplo
+-   [x] Criação arbitrária de moedas
+-   [x] Gasto sem chave privada
+-   [x] Envio de valor inválido
+-   [x] Bloco com Proof of Work inválida
+-   [x] Bloco com hash anterior incorreto
+-   [x] Tentativas de manipulação de saldo
+-   [x] Transações inválidas propagadas pela rede
 
 Pergunta principal:
 
