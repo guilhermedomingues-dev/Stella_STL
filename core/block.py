@@ -8,9 +8,6 @@ from time import time
 
 
 def new_block(index, transactions, proof, previous_hash=None):
-    """
-    Cria a estrutura de um novo bloco
-    """
     return {
         'index': index,
         'timestamp': time(),
@@ -22,11 +19,8 @@ def new_block(index, transactions, proof, previous_hash=None):
 
 def hash(block):
     """
-    Gera o hash SHA-256 de um bloco
-    :param block: <dict> Bloco que será transformado em hash
-    :return: <str> Hash do bloco
+    Gera o hash SHA-256 de um bloco.
     """
-
     block_string = json.dumps(block, sort_keys=True).encode()
     return hashlib.sha256(block_string).hexdigest()
 
