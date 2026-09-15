@@ -222,3 +222,39 @@ def get_blocks():
         }
         for row in rows
     ]
+
+def get_next_login_id():
+    connection = get_connection()
+
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS user_sequence (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            next_login_id INTEGER NOT NULL
+        )
+        """
+    )
+
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO user_sequence (id, next_login_id)
+        VALUES (1, 1)
+        """
+    )
+
+    login_id = connection.execute(
+        "SELECT next_login_id FROM user_sequence WHERE id = 1"
+    ).fetchone()[0]
+
+    connection.execute(
+        """
+        UPDATE user_sequence
+        SET next_login_id = next_login_id + 1
+        WHERE id = 1
+        """
+    )
+
+    connection.commit()
+    connection.close()
+
+    return login_id

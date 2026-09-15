@@ -209,21 +209,21 @@ Stella.
 
 Implementar:
 
--   [ ] Criar o conceito de usuário
--   [ ] Criar identificação única para usuários
--   [ ] Associar usuário e carteira
--   [ ] Criar cadastro de usuários
--   [ ] Criar autenticação
--   [ ] Armazenar credenciais de forma segura
--   [ ] Permitir acesso do usuário à própria carteira
--   [ ] Impedir acesso à carteira de outro usuário
--   [ ] Associar operações ao usuário autenticado
--   [ ] Integrar usuário, carteira e endereço
--   [ ] Testar criação de usuários
--   [ ] Testar autenticação
--   [ ] Testar associação entre usuário e carteira
--   [ ] Testar acesso autorizado
--   [ ] Testar acesso não autorizado
+-   [x] Criar o conceito de usuário
+-   [x] Criar identificação única para usuários
+-   [x] Associar usuário e carteira
+-   [x] Criar cadastro de usuários
+-   [x] Criar autenticação
+-   [x] Armazenar credenciais de forma segura
+-   [x] Permitir acesso do usuário à própria carteira
+-   [x] Impedir acesso à carteira de outro usuário
+-   [x] Associar operações ao usuário autenticado
+-   [x] Integrar usuário, carteira e endereço
+-   [x] Testar criação de usuários
+-   [x] Testar autenticação
+-   [x] Testar associação entre usuário e carteira
+-   [x] Testar acesso autorizado
+-   [x] Testar acesso não autorizado
 
 Estrutura:
 
@@ -499,18 +499,6 @@ os problemas posteriormente.
 
 Cada componente importante deve ser compreensível e testável
 isoladamente antes de ser integrado ao restante do protocolo.
-
-------------------------------------------------------------------------
-
-# Próximo passo
-
-**Fase atual: FASE 4 --- Carteiras**
-
-As Fases 0, 1, 2 e 3 foram concluídas.
-
-A Fase 4 será concluída com a implementação e os testes das
-funcionalidades de carteira. A persistência dos dados e das chaves
-privadas será tratada posteriormente na **Fase 5 --- Persistência**.
 
 ------------------------------------------------------------------------
 
