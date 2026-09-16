@@ -399,13 +399,13 @@ Os endpoints atuais serão adaptados ao novo protocolo:
 
 Podem ser adicionados, quando necessários:
 
--   [ ] API para usuários
--   [ ] API para autenticação
--   [ ] API para carteiras
--   [ ] Consulta de saldo
--   [ ] Consulta de transação
--   [ ] Consulta de bloco
--   [ ] Envio de STL
+-   [x] API para usuários
+-   [x] API para autenticação
+-   [x] API para carteiras
+-   [x] Consulta de saldo
+-   [x] Consulta de transação
+-   [x] Consulta de bloco
+-   [x] Envio de STL
 
 **Regra:** a API não deve conter as regras fundamentais da blockchain.
 Ela deve apenas se comunicar com o núcleo do protocolo.
@@ -436,16 +436,59 @@ Carteira B
 
 Testar:
 
--   [ ] Mineração
--   [ ] Transações
--   [ ] Sincronização
--   [ ] Conflitos
--   [ ] Validação
--   [ ] Comunicação entre nós
--   [ ] Segurança
--   [ ] Persistência
+-   [x] Mineração
+-   [x] Transações
+-   [x] Sincronização
+-   [x] Conflitos
+-   [x] Validação
+-   [x] Comunicação entre nós
+-   [x] Segurança
+-   [x] Persistência
 
 ------------------------------------------------------------------------
+
+## FASE 14 --- Interface Web
+
+**Objetivo:** criar uma interface web básica para interação do usuário com a Stella.
+
+Estrutura:
+
+```text
+Usuário
+   ↓
+Interface Web
+   ↓
+Flask + Jinja
+   ↓
+API
+   ↓
+Núcleo da Stella
+```
+
+Implementar:
+
+- [ ] Tela insticuional
+- [x] Tela inicial
+- [x] Tela de cadastro
+- [x] Tela de login
+- [x] Área do usuário
+- [x] Consulta de carteira
+- [x] Consulta de saldo
+- [x] Envio de STL
+- [x] Recebimento de STL
+- [x] Consulta de transações
+- [x] Consulta de blocos
+- [x] Mineração
+- [ ] Compra de STL
+- [ ] Mensagens de sucesso e erro
+- [ ] Navegação entre páginas
+
+**Regra:** a interface não deve conter as regras fundamentais da blockchain.
+
+Ela deve apenas interagir com a API e apresentar as informações ao usuário.
+
+---
+
 
 # Arquitetura inicial
 

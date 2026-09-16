@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stella — Blocos</title>
+</head>
+<body>
+
+    <h1>Stella</h1>
+
+    <h2>Consultar bloco</h2>
+
+    <form method="GET" action="/blocks">
+        <label for="index">Número do bloco</label>
+        <input type="number" id="index" name="index" min="1" required>
+
+        <button type="submit">Consultar</button>
+    </form>
+
+    {% if block %}
+        <hr>
+
+        <p><strong>Índice:</strong> {{ block['index'] }}</p>
+        <p><strong>Timestamp:</strong> {{ block['timestamp'] }}</p>
+        <p><strong>Proof:</strong> {{ block['proof'] }}</p>
+        <p><strong>Hash anterior:</strong> {{ block['previous_hash'] }}</p>
+
+        <h3>Transações</h3>
+
+        {% if block['transactions'] %}
+            {% for transaction in block['transactions'] %}
+                <pre>{{ transaction }}</pre>
+            {% endfor %}
+        {% else %}
+            <p>Nenhuma transação.</p>
+        {% endif %}
+    {% endif %}
+
+    <br>
+
+    <a href="/dashboard">Voltar ao dashboard</a>
+
+</body>
+</html>

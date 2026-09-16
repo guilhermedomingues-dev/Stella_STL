@@ -1,6 +1,13 @@
 from core.user import User
 from core.wallet import Wallet
-from persistence.database import get_connection, get_next_login_id, save_wallet, get_wallet
+from persistence.database import (
+    get_connection,
+    get_next_login_id,
+    save_wallet,
+    get_wallet,
+    initialize_database
+)
+from core.auth import hash_password
 
 
 class AuthenticatedUser:
@@ -11,9 +18,12 @@ class AuthenticatedUser:
 
 
 def create_user(username, password):
+    initialize_database()
+
     login_id = get_next_login_id()
     wallet = Wallet()
-    user = User(login_id, username, wallet, password)
+    password_hash = hash_password(password)
+    user = User(login_id, username, wallet, password_hash)
 
     connection = get_connection()
 
@@ -23,7 +33,8 @@ def create_user(username, password):
             user_id TEXT PRIMARY KEY,
             login_id INTEGER UNIQUE NOT NULL,
             username TEXT NOT NULL,
-            wallet_address TEXT UNIQUE NOT NULL
+            wallet_address TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
         )
         """
     )
@@ -34,15 +45,17 @@ def create_user(username, password):
             user_id,
             login_id,
             username,
-            wallet_address
+            wallet_address,
+            password_hash
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         """,
         (
             user.user_id,
             user.login_id,
             user.username,
             user.wallet.address,
+            password_hash,
         )
     )
 
@@ -52,6 +65,26 @@ def create_user(username, password):
     save_wallet(wallet)
 
     return user
+
+
+def get_user(login_id):
+    connection = get_connection()
+
+    row = connection.execute(
+        """
+        SELECT user_id, login_id, username, wallet_address, password_hash
+        FROM users
+        WHERE login_id = ?
+        """,
+        (login_id,)
+    ).fetchone()
+
+    connection.close()
+
+    if row is None:
+        return None
+
+    return row
 
 
 def get_user_wallet(user_id, login_id):

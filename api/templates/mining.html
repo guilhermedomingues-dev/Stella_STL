@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stella — Mineração</title>
+</head>
+<body>
+
+    <h1>Stella</h1>
+
+    <h2>Mineração</h2>
+
+    <p>Carteira do minerador:</p>
+    <p>{{ address }}</p>
+
+    <form method="POST" action="/mine">
+        <button type="submit">Minerar bloco</button>
+    </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <a href="/dashboard">Voltar ao dashboard</a>
+
+</body>
+</html>
