@@ -5,6 +5,7 @@ Funções relacionadas à criação e assinatura de transações.
 import hashlib
 from core.utxo import valid_utxo, consume_utxo, create_utxo
 from core.crypto import sign_message, verify_signature
+from config import SAINTS_PER_STL
 
 
 def create_output(owner, amount):
@@ -19,7 +20,7 @@ def new_transaction(inputs, outputs, available_utxos, spent_utxos):
         if not valid_utxo(utxo, available_utxos):
             return None
 
-    if any(output['amount'] <= 0 for output in outputs):
+    if any(not valid_amount(output['amount']) for output in outputs):
         return None
 
     input_amount = sum(utxo['amount'] for utxo in inputs)
@@ -73,7 +74,7 @@ def verify_transaction(public_key, transaction):
     return True
 
 
-def create_coinbase_transaction(miner_address, reward):
+def create_coinbase_transaction(miner_address, reward, block_index):
     return {
         'type': 'coinbase',
         'inputs': [],
@@ -82,7 +83,11 @@ def create_coinbase_transaction(miner_address, reward):
                 'owner': miner_address,
                 'amount': reward
             }
-        ]
+        ],
+        'transaction_id': hashlib.sha256(
+            f'{miner_address}{reward}{block_index}'.encode()
+        ).hexdigest(),
+        'block_index': block_index
     }
 
 def valid_transaction(transaction, available_utxos):
@@ -92,7 +97,7 @@ def valid_transaction(transaction, available_utxos):
     if not inputs or not outputs:
         return False
 
-    if any(output['amount'] <= 0 for output in outputs):
+    if any(not valid_amount(output['amount']) for output in outputs):
         return False
 
     for utxo in inputs:
@@ -106,3 +111,8 @@ def valid_transaction(transaction, available_utxos):
         return False
 
     return True
+
+def valid_amount(amount):
+    saints = round(amount * SAINTS_PER_STL)
+
+    return saints > 0 and abs(amount * SAINTS_PER_STL - saints) < 1e-8

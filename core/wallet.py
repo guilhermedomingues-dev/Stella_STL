@@ -1,5 +1,6 @@
 from core.crypto import generate_private_key, get_public_key
 from cryptography.hazmat.primitives import serialization, hashes
+from config import SAINTS_PER_STL
 
 
 class Wallet:
@@ -30,6 +31,14 @@ class Wallet:
         )
 
     def create_transaction(self, recipient, amount, available_utxos, spent_utxos):
+        if amount <= 0:
+            return None
+
+        saints = round(amount * SAINTS_PER_STL)
+
+        if abs(amount * SAINTS_PER_STL - saints) >= 1e-8:
+            return None
+
         inputs = [
             utxo
             for utxo in available_utxos

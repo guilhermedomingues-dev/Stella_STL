@@ -79,6 +79,23 @@ def save_utxo(utxo):
     connection.commit()
     connection.close()
 
+def remove_utxo(utxo):
+    connection = get_connection()
+
+    connection.execute(
+        """
+        DELETE FROM utxos
+        WHERE transaction_id = ? AND output_index = ?
+        """,
+        (
+            utxo['transaction_id'],
+            utxo['output_index'],
+        )
+    )
+
+    connection.commit()
+    connection.close()
+
 
 def get_utxos():
     connection = get_connection()
@@ -98,6 +115,33 @@ def get_utxos():
         }
         for row in rows
     ]
+
+def rebuild_utxos(chain):
+    utxos = {}
+
+    for block in chain:
+        for transaction in block['transactions']:
+            transaction_id = transaction.get('transaction_id')
+
+            for index, output in enumerate(transaction.get('outputs', [])):
+                key = (transaction_id, index)
+
+                utxos[key] = {
+                    'transaction_id': transaction_id,
+                    'output_index': index,
+                    'owner': output['owner'],
+                    'amount': output['amount'],
+                }
+
+            for utxo in transaction.get('inputs', []):
+                key = (
+                    utxo['transaction_id'],
+                    utxo['output_index']
+                )
+
+                utxos.pop(key, None)
+
+    return list(utxos.values())
 
 
 def initialize_database():

@@ -1,11 +1,11 @@
 from core.block import new_block, hash
 from core.transaction import new_transaction as create_transaction, valid_transaction
 from core.blockchain import Blockchain
-from network.node import generate_node_id
 from uuid import uuid4
 from persistence.user_repository import create_user, get_user_wallet, get_user
 from core.utxo import get_balance
 from core.auth import verify_password
+from persistence.database import remove_utxo
 
 from flask import Flask, jsonify, request, render_template, session, redirect, flash
 
@@ -288,7 +288,7 @@ def new_transaction():
     transaction = create_transaction(
         values['inputs'],
         values['outputs'],
-        available_utxos,
+        blockchain.available_utxos,
         spent_utxos
     )
 
@@ -353,10 +353,19 @@ def consensus():
 def receive_transaction():
     transaction = request.get_json()
 
+    if blockchain.mempool_full():
+        return jsonify({
+            'message': 'Mempool is full'
+        }), 400
+
     if not valid_transaction(transaction, blockchain.available_utxos):
         return jsonify({
             'message': 'Invalid transaction'
         }), 400
+
+    for utxo in transaction['inputs']:
+        blockchain.available_utxos.remove(utxo)
+        remove_utxo(utxo)
 
     blockchain.current_transactions.append(transaction)
 
@@ -373,7 +382,7 @@ def receive_block():
             'message': 'Invalid block'
         }), 400
 
-    blockchain.chain.append(block)
+    blockchain.receive_block(block)
 
     return jsonify({
         'message': 'Block received'

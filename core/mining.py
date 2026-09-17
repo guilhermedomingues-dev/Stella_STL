@@ -3,8 +3,23 @@ Algoritmo de Proof of Work (PoW) da Stella.
 """
 
 import hashlib
-from config import MAX_SUPPLY, BLOCK_REWARD, DIFFICULTY, HALVING_INTERVAL
+from config import MAX_SUPPLY, BLOCK_REWARD, DIFFICULTY, HALVING_INTERVAL, TARGET_BLOCK_TIME, MAX_HALVINGS
 
+def get_difficulty(chain):
+    if len(chain) < 2:
+        return DIFFICULTY
+
+    last_block = chain[-1]
+    previous_block = chain[-2]
+
+    actual_time = last_block['timestamp'] - previous_block['timestamp']
+
+    if actual_time <= 0:
+        return DIFFICULTY
+
+    difficulty = DIFFICULTY * TARGET_BLOCK_TIME / actual_time
+
+    return max(1, round(difficulty))
 
 def proof_of_work(last_proof):
     """
@@ -18,27 +33,17 @@ def proof_of_work(last_proof):
 
     return proof
 
-
-def valid_proof(last_proof, proof):
-    """
-    Verifica se a prova atende à dificuldade definida pelo protocolo.
-    """
-    guess = f'{last_proof}{proof}'.encode()
-    guess_hash = hashlib.sha256(guess).hexdigest()
-
-    return guess_hash[:4] == "0000"
-
 def valid_supply(current_supply):
     return current_supply + BLOCK_REWARD <= MAX_SUPPLY
 
 def valid_reward(reward):
     return reward == BLOCK_REWARD
 
-def valid_proof(last_proof, proof):
+def valid_proof(last_proof, proof, difficulty):
     guess = f'{last_proof}{proof}'.encode()
     guess_hash = hashlib.sha256(guess).hexdigest()
 
-    return guess_hash[:DIFFICULTY] == '0' * DIFFICULTY
+    return guess_hash[:difficulty] == '0' * difficulty
 
 def get_total_issued(chain):
     total = 0
@@ -66,11 +71,20 @@ def valid_coinbase(transaction, chain):
 
     reward = outputs[0].get('amount')
 
-    if reward != BLOCK_REWARD:
+    expected_reward = get_block_reward(transaction.get('block_index'))
+
+    if reward != expected_reward:
         return False
 
     return get_total_issued(chain) + reward <= MAX_SUPPLY
 
+def get_halving_count(block_index):
+    return (block_index - 1) // HALVING_INTERVAL
+
 def get_block_reward(block_index):
-    halvings = (block_index - 1) // HALVING_INTERVAL
+    halvings = get_halving_count(block_index)
+
+    if halvings >= MAX_HALVINGS:
+        return 0
+
     return BLOCK_REWARD // (2 ** halvings)
