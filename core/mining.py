@@ -57,7 +57,7 @@ def get_total_issued(chain):
     return total
 
 
-def valid_coinbase(transaction, chain):
+def valid_coinbase(transaction, chain, block_transactions=None):
     if transaction.get('type') != 'coinbase':
         return False
 
@@ -71,12 +71,25 @@ def valid_coinbase(transaction, chain):
 
     reward = outputs[0].get('amount')
 
-    expected_reward = get_block_reward(transaction.get('block_index'))
+    block_index = transaction.get('block_index')
 
-    if reward != expected_reward:
+    expected_reward = get_block_reward(block_index)
+
+    total_fees = 0
+
+    if block_transactions:
+        for tx in block_transactions:
+            if tx.get('type') == 'coinbase':
+                continue
+
+            total_fees += tx.get('fee', 0)
+
+    expected_total = expected_reward + total_fees
+
+    if reward != expected_total:
         return False
 
-    return get_total_issued(chain) + reward <= MAX_SUPPLY
+    return get_total_issued(chain) + expected_reward <= MAX_SUPPLY
 
 def get_halving_count(block_index):
     return (block_index - 1) // HALVING_INTERVAL
@@ -87,4 +100,7 @@ def get_block_reward(block_index):
     if halvings >= MAX_HALVINGS:
         return 0
 
-    return BLOCK_REWARD // (2 ** halvings)
+    reward_saints = BLOCK_REWARD * 100_000_000
+    reward_saints //= 2 ** halvings
+
+    return reward_saints / 100_000_000

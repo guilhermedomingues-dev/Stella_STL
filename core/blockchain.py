@@ -46,7 +46,11 @@ class Blockchain:
             transaction
             for transaction in self.current_transactions
             if transaction.get('type') == 'coinbase'
-            or valid_transaction(transaction, self.available_utxos)
+            or valid_transaction(
+                transaction,
+                self.available_utxos,
+                self.last_block['index'] + 1
+            )
         ]
 
         block = new_block(
@@ -112,7 +116,11 @@ class Blockchain:
             if not valid_proof(last_block['proof'], block['proof'], difficulty):
                 return False
 
-            if not valid_coinbase(block['transactions'][0], chain[:current_index]):
+            if not valid_coinbase(
+                block['transactions'][0],
+                chain[:current_index],
+                block['transactions']
+            ):
                 return False
 
             last_block = block
@@ -146,7 +154,11 @@ class Blockchain:
                 if transaction_id in new_transaction_ids:
                     continue
 
-                if valid_transaction(transaction, self.available_utxos):
+                if valid_transaction(
+                    transaction,
+                    self.available_utxos,
+                    self.last_block['index'] + 1
+                ):
                     self.current_transactions.append(transaction)
 
     def choose_chain(self, chain):
@@ -177,7 +189,11 @@ class Blockchain:
         if not valid_proof(self.last_block['proof'], block['proof'], difficulty):
             return False
 
-        if not valid_coinbase(block['transactions'][0], self.chain):
+        if not valid_coinbase(
+            block['transactions'][0],
+            self.chain,
+            block['transactions']
+        ):
             return False
 
         return True
@@ -199,13 +215,25 @@ class Blockchain:
 
         reward = get_block_reward(block_index)
 
+        total_fees = sum(
+            transaction.get('fee', 0)
+            for transaction in self.current_transactions
+            if transaction.get('type') != 'coinbase'
+        )
+
+        total_reward = reward + total_fees
+
         coinbase = create_coinbase_transaction(
             miner_address,
-            reward,
+            total_reward,
             block_index
         )
 
-        if not valid_coinbase(coinbase, self.chain):
+        if not valid_coinbase(
+            coinbase,
+            self.chain,
+            self.current_transactions
+        ):
             return None
 
         self.current_transactions.append(coinbase)

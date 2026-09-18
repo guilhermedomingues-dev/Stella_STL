@@ -7,6 +7,8 @@
 </head>
 <body>
 
+    <a href="/home">←</a>
+
     <h1>Stella</h1>
 
     <h2>Meu saldo</h2>
@@ -16,7 +18,31 @@
     <p><strong>Carteira:</strong></p>
     <p>{{ address }}</p>
 
-    <a href="/dashboard">Voltar ao dashboard</a>
+    <h3>Extrato</h3>
+
+    {% if history %}
+        {% for transaction in history %}
+            <div>
+                <p>
+                    <strong>Transação:</strong>
+                    {{ transaction['transaction_id'] }}
+                </p>
+
+                <p>
+                    <strong>Valor:</strong>
+                    {% for output in transaction['outputs'] %}
+                        {% if output['owner'] == address %}
+                            + {{ output['amount'] }} STL
+                        {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>Nenhuma transação encontrada.</p>
+    {% endif %}
 
 </body>
 </html>

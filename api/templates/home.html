@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stella — Home</title>
+</head>
+
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    {% endwith %}
+
+    <header>
+        <h1>Stella</h1>
+        <p>Olá, {{ username }}</p>
+    </header>
+
+    <main>
+
+        <section>
+            <h2>Saldo</h2>
+            <p>{{ balance }} STL</p>
+            <a href="/balance">Ver saldo</a>
+        </section>
+
+        <section>
+            <h2>Carteira</h2>
+            <p>{{ address }}</p>
+            <a href="/wallet">Ver carteira</a>
+        </section>
+
+        <section>
+            <h2>Ações</h2>
+
+            <a href="/send">Enviar STL</a>
+            <br>
+
+            <a href="/receive">Receber STL</a>
+            <br>
+
+            <a href="/mine">Minerar</a>
+        </section>
+
+        <section>
+            <h2>Stella</h2>
+
+            <a href="/transactions">Transações</a>
+            <br>
+
+            <a href="/blocks">Blocos</a>
+        </section>
+
+        <section>
+            <h2>Conta</h2>
+
+            <a href="/account">Minha conta</a>
+            <br>
+
+            <a href="/logout">Sair</a>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

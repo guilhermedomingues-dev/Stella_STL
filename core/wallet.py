@@ -30,7 +30,7 @@ class Wallet:
             if utxo['owner'] == self.address
         )
 
-    def create_transaction(self, recipient, amount, available_utxos, spent_utxos):
+    def create_transaction(self, recipient, amount, available_utxos, spent_utxos, block_index=None):
         if amount <= 0:
             return None
 
@@ -61,7 +61,8 @@ class Wallet:
             inputs,
             outputs,
             available_utxos,
-            spent_utxos
+            spent_utxos,
+            block_index
         )
 
     def sign_transaction(self, transaction):

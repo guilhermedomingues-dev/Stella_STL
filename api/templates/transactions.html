@@ -23,14 +23,19 @@
                     </p>
                 {% endfor %}
 
+                {% if transaction.get('fee', 0) > 0 %}
+                    <p>
+                        <strong>Taxa:</strong>
+                        {{ transaction['fee'] }} STL
+                    </p>
+                {% endif %}
+
                 <hr>
             </div>
         {% endfor %}
     {% else %}
         <p>Nenhuma transação encontrada.</p>
     {% endif %}
-
-    <a href="/dashboard">Voltar ao dashboard</a>
 
 </body>
 </html>

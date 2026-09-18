@@ -31,13 +31,11 @@ def register():
 
     user = create_user(username, password)
 
-    return jsonify({
-        'message': 'User created',
-        'user_id': user.user_id,
-        'login_id': user.login_id,
-        'username': user.username,
-        'address': user.address
-    }), 201
+    session['user_id'] = user.user_id
+    session['login_id'] = user.login_id
+    session['username'] = user.username
+
+    return redirect('/home')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -59,18 +57,33 @@ def login():
     session['login_id'] = user[1]
     session['username'] = user[2]
 
-    return redirect('/dashboard')
+    return redirect('/home')
 
-@app.route('/dashboard')
-def dashboard():
+@app.route('/home')
+def home():
     if 'user_id' not in session:
         return redirect('/login')
 
+    wallet = get_user_wallet(
+        session['user_id'],
+        session['login_id']
+    )
+
+    if wallet is None:
+        return 'Wallet not found', 404
+
+    balance = get_balance(
+        wallet.address,
+        blockchain.available_utxos
+    )
+
     return render_template(
-        'dashboard.html',
+        'home.html',
         username=session['username'],
         login_id=session['login_id'],
-        user_id=session['user_id']
+        user_id=session['user_id'],
+        balance=balance,
+        address=wallet.address
     )
 
 @app.route('/account')
@@ -125,10 +138,38 @@ def balance():
         blockchain.available_utxos
     )
 
+    history = []
+
+    for block in reversed(blockchain.chain):
+        for transaction in reversed(block['transactions']):
+            if transaction.get('type') == 'coinbase':
+                continue
+
+            is_related = any(
+                output.get('owner') == wallet.address
+                for output in transaction.get('outputs', [])
+            )
+
+            if not is_related:
+                is_related = any(
+                    utxo.get('owner') == wallet.address
+                    for utxo in transaction.get('inputs', [])
+                )
+
+            if is_related:
+                history.append(transaction)
+
+            if len(history) >= 5:
+                break
+
+        if len(history) >= 5:
+            break
+
     return render_template(
         'balance.html',
         balance=balance,
-        address=wallet.address
+        address=wallet.address,
+        history=history
     )
 
 @app.route('/send', methods=['GET', 'POST'])
@@ -167,7 +208,8 @@ def send():
         recipient_wallet.address,
         amount,
         blockchain.available_utxos,
-        spent_utxos
+        spent_utxos,
+        blockchain.last_block['index'] + 1
     )
 
     if transaction is None:
@@ -209,10 +251,19 @@ def transactions():
 
     for block in blockchain.chain:
         for transaction in block['transactions']:
-            for output in transaction.get('outputs', []):
-                if output.get('owner') == wallet.address:
-                    transactions.append(transaction)
-                    break
+
+            has_input = any(
+                utxo.get('owner') == wallet.address
+                for utxo in transaction.get('inputs', [])
+            )
+
+            has_output = any(
+                output.get('owner') == wallet.address
+                for output in transaction.get('outputs', [])
+            )
+
+            if has_input or has_output:
+                transactions.append(transaction)
 
     return render_template(
         'transactions.html',
@@ -289,7 +340,8 @@ def new_transaction():
         values['inputs'],
         values['outputs'],
         blockchain.available_utxos,
-        spent_utxos
+        spent_utxos,
+        blockchain.last_block['index'] + 1
     )
 
     if transaction is None:
@@ -358,7 +410,11 @@ def receive_transaction():
             'message': 'Mempool is full'
         }), 400
 
-    if not valid_transaction(transaction, blockchain.available_utxos):
+    if not valid_transaction(
+        transaction,
+        blockchain.available_utxos,
+        blockchain.last_block['index'] + 1
+    ):
         return jsonify({
             'message': 'Invalid transaction'
         }), 400
@@ -488,7 +544,8 @@ def send_stl():
         values['recipient'],
         values['amount'],
         blockchain.available_utxos,
-        blockchain.spent_utxos
+        blockchain.spent_utxos,
+        blockchain.last_block['index'] + 1
     )
 
     if transaction is None:
