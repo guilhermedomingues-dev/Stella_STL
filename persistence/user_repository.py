@@ -48,7 +48,7 @@ def create_user(username, password):
             wallet_address,
             password_hash
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
         """,
         (
             user.user_id,
@@ -74,7 +74,7 @@ def get_user(login_id):
         """
         SELECT user_id, login_id, username, wallet_address, password_hash
         FROM users
-        WHERE login_id = ?
+        WHERE login_id = %s
         """,
         (login_id,)
     ).fetchone()
@@ -94,7 +94,7 @@ def get_user_wallet(user_id, login_id):
         """
         SELECT wallet_address
         FROM users
-        WHERE user_id = ? AND login_id = ?
+        WHERE user_id = %s AND login_id = %s
         """,
         (user_id, login_id)
     ).fetchone()

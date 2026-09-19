@@ -1,5 +1,6 @@
 import json
-import sqlite3
+import os
+import psycopg
 from pathlib import Path
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
@@ -9,13 +10,11 @@ from core.crypto import get_public_key
 
 
 DATABASE_DIR = Path("database")
-DATABASE_PATH = DATABASE_DIR / "stella.db"
 KEY_PATH = DATABASE_DIR / "wallet.key"
 
 
 def get_connection():
-    DATABASE_DIR.mkdir(exist_ok=True)
-    return sqlite3.connect(DATABASE_PATH)
+    return psycopg.connect(os.environ["DATABASE_URL"])
 
 
 def get_encryption_key():
@@ -31,7 +30,7 @@ def get_wallet(address):
     connection = get_connection()
 
     row = connection.execute(
-        "SELECT address, public_key, private_key FROM wallets WHERE address = ?",
+        "SELECT address, public_key, private_key FROM wallets WHERE address = %s",
         (address,)
     ).fetchone()
 
@@ -66,7 +65,7 @@ def save_utxo(utxo):
             owner,
             amount
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
         """,
         (
             utxo['transaction_id'],
@@ -79,13 +78,14 @@ def save_utxo(utxo):
     connection.commit()
     connection.close()
 
+
 def remove_utxo(utxo):
     connection = get_connection()
 
     connection.execute(
         """
         DELETE FROM utxos
-        WHERE transaction_id = ? AND output_index = ?
+        WHERE transaction_id = %s AND output_index = %s
         """,
         (
             utxo['transaction_id'],
@@ -115,6 +115,7 @@ def get_utxos():
         }
         for row in rows
     ]
+
 
 def rebuild_utxos(chain):
     utxos = {}
@@ -151,7 +152,7 @@ def initialize_database():
         """
         CREATE TABLE IF NOT EXISTS blocks (
             index_number INTEGER PRIMARY KEY,
-            timestamp REAL NOT NULL,
+            timestamp DOUBLE PRECISION NOT NULL,
             transactions TEXT NOT NULL,
             proof INTEGER NOT NULL,
             previous_hash TEXT NOT NULL
@@ -165,7 +166,7 @@ def initialize_database():
             transaction_id TEXT NOT NULL,
             output_index INTEGER NOT NULL,
             owner TEXT NOT NULL,
-            amount REAL NOT NULL,
+            amount DOUBLE PRECISION NOT NULL,
             PRIMARY KEY (transaction_id, output_index)
         )
         """
@@ -204,7 +205,7 @@ def save_wallet(wallet):
             public_key,
             private_key
         )
-        VALUES (?, ?, ?)
+        VALUES (%s, %s, %s)
         """,
         (
             wallet.address,
@@ -232,7 +233,7 @@ def save_block(block):
             proof,
             previous_hash
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
         """,
         (
             block['index'],
@@ -251,7 +252,16 @@ def get_blocks():
     connection = get_connection()
 
     rows = connection.execute(
-        "SELECT index_number, timestamp, transactions, proof, previous_hash FROM blocks ORDER BY index_number"
+        """
+        SELECT
+            index_number,
+            timestamp,
+            transactions,
+            proof,
+            previous_hash
+        FROM blocks
+        ORDER BY index_number
+        """
     ).fetchall()
 
     connection.close()
@@ -267,6 +277,7 @@ def get_blocks():
         for row in rows
     ]
 
+
 def get_next_login_id():
     connection = get_connection()
 
@@ -281,8 +292,9 @@ def get_next_login_id():
 
     connection.execute(
         """
-        INSERT OR IGNORE INTO user_sequence (id, next_login_id)
+        INSERT INTO user_sequence (id, next_login_id)
         VALUES (1, 1)
+        ON CONFLICT (id) DO NOTHING
         """
     )
 
