@@ -219,10 +219,7 @@ def send():
 
     blockchain.current_transactions.append(transaction)
 
-    return jsonify({
-        'message': 'Transaction received',
-        'transaction': transaction
-    }), 201
+    return redirect('/send')
 
 @app.route('/receive')
 def receive():
@@ -561,6 +558,10 @@ def send_stl():
         'message': 'Transaction received',
         'transaction': transaction
     }), 201
+
+@app.route('/debug/mempool', methods=['GET'])
+def debug_mempool():
+    return jsonify(blockchain.current_transactions)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

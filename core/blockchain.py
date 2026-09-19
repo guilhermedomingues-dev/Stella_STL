@@ -11,9 +11,9 @@ from persistence.database import (
     save_block,
     get_utxos,
     save_utxo,
+    remove_utxo,
     rebuild_utxos
 )
-from config import BLOCK_REWARD, MATURATION_BLOCKS
 from core.transaction import create_coinbase_transaction, valid_transaction
 from core.utxo import create_utxo
 from network.node import Node
@@ -41,17 +41,29 @@ class Blockchain:
             )
             save_block(self.chain[0])
 
+    def process_confirmed_transactions(self, transactions):
+        for transaction in transactions:
+            if transaction.get('type') == 'coinbase':
+                continue
+
+            for utxo in transaction.get('inputs', []):
+                remove_utxo(utxo)
+
+            for index, output in enumerate(transaction.get('outputs', [])):
+                utxo = create_utxo(
+                    transaction['transaction_id'],
+                    index,
+                    output['owner'],
+                    output['amount']
+                )
+
+                if utxo not in self.available_utxos:
+                    self.available_utxos.append(utxo)
+
+                save_utxo(utxo)
+
     def add_block(self, proof, previous_hash=None):
-        valid_transactions = [
-            transaction
-            for transaction in self.current_transactions
-            if transaction.get('type') == 'coinbase'
-            or valid_transaction(
-                transaction,
-                self.available_utxos,
-                self.last_block['index'] + 1
-            )
-        ]
+        valid_transactions = list(self.current_transactions)
 
         block = new_block(
             index=len(self.chain) + 1,
@@ -62,6 +74,7 @@ class Blockchain:
 
         self.chain.append(block)
         save_block(block)
+        self.process_confirmed_transactions(block['transactions'])
         self.process_matured_coinbases()
         self.node.broadcast_block(block)
 
@@ -70,6 +83,7 @@ class Blockchain:
     def receive_block(self, block):
         self.chain.append(block)
         save_block(block)
+        self.process_confirmed_transactions(block['transactions'])
         self.process_matured_coinbases()
 
     def process_matured_coinbases(self):
