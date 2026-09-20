@@ -1,5 +1,5 @@
 """
-Ponto de entrada da aplicação MariaCoin.
+Ponto de entrada da aplicação Stella.
 """
 
 from api.app import app
