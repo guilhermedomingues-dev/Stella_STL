@@ -7,6 +7,8 @@ from core.utxo import valid_utxo, consume_utxo, create_utxo
 from core.crypto import sign_message, verify_signature
 from config import SAINTS_PER_STL, TRANSACTION_FEE_RATE, MAX_TRANSACTION_FEE
 from core.mining import get_block_reward
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 
 
 def create_output(owner, amount):
@@ -14,6 +16,7 @@ def create_output(owner, amount):
         'owner': owner,
         'amount': amount,
     }
+
 
 def calculate_transaction_fee(amount, block_index):
     reward = get_block_reward(block_index)
@@ -36,6 +39,7 @@ def calculate_transaction_fee(amount, block_index):
         fee_saints = max_fee_saints
 
     return fee_saints / SAINTS_PER_STL
+
 
 def new_transaction(inputs, outputs, available_utxos, spent_utxos, block_index=None):
     for utxo in inputs:
@@ -100,13 +104,40 @@ def new_transaction(inputs, outputs, available_utxos, spent_utxos, block_index=N
 
     return transaction
 
+
 def valid_transaction(transaction, available_utxos, block_index=None):
     inputs = transaction.get('inputs', [])
     outputs = transaction.get('outputs', [])
     fee = transaction.get('fee', 0)
+    signature = transaction.get('signature')
+    public_key_data = transaction.get('public_key')
 
     if not inputs or not outputs:
         return False
+
+    if not signature or not public_key_data:
+        return False
+
+    try:
+        public_key = serialization.load_pem_public_key(
+            bytes.fromhex(public_key_data)
+        )
+    except (ValueError, TypeError):
+        return False
+
+    if not isinstance(public_key, ec.EllipticCurvePublicKey):
+        return False
+
+    public_key_bytes = public_key.public_bytes(
+        encoding=serialization.Encoding.X962,
+        format=serialization.PublicFormat.CompressedPoint
+    )
+
+    public_key_hash = hashlib.sha256(public_key_bytes).hexdigest()
+
+    for utxo in inputs:
+        if utxo.get('owner') != public_key_hash:
+            return False
 
     if any(not valid_amount(output['amount']) for output in outputs):
         return False
@@ -133,13 +164,29 @@ def valid_transaction(transaction, available_utxos, block_index=None):
     if output_amount + fee > input_amount:
         return False
 
+    try:
+        verify_transaction(public_key, transaction)
+    except Exception:
+        return False
+
     return True
 
 
 def sign_transaction(private_key, transaction):
-    message = str(transaction)
+    public_key = private_key.public_key()
+
+    transaction['public_key'] = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    ).hex()
+
+    data = transaction.copy()
+    message = str(data)
+
     signature = sign_message(private_key, message)
+
     transaction['signature'] = signature.hex()
+
     return transaction
 
 
@@ -147,7 +194,13 @@ def verify_transaction(public_key, transaction):
     data = transaction.copy()
     signature = bytes.fromhex(data.pop('signature'))
     message = str(data)
-    verify_signature(public_key, message, signature)
+
+    verify_signature(
+        public_key,
+        message,
+        signature
+    )
+
     return True
 
 
@@ -166,6 +219,7 @@ def create_coinbase_transaction(miner_address, reward, block_index):
         ).hexdigest(),
         'block_index': block_index
     }
+
 
 def valid_amount(amount):
     saints = round(amount * SAINTS_PER_STL)

@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from core.wallet import Wallet
 from core.crypto import get_public_key
+from config import MATURATION_BLOCKS
 
 
 DATABASE_DIR = Path("database")
@@ -119,10 +120,17 @@ def get_utxos():
 
 def rebuild_utxos(chain):
     utxos = {}
+    current_block_index = chain[-1]['index']
 
     for block in chain:
+        confirmations = current_block_index - block['index']
+
         for transaction in block['transactions']:
             transaction_id = transaction.get('transaction_id')
+
+            if transaction.get('type') == 'coinbase':
+                if confirmations < MATURATION_BLOCKS:
+                    continue
 
             for index, output in enumerate(transaction.get('outputs', [])):
                 key = (transaction_id, index)
@@ -139,7 +147,6 @@ def rebuild_utxos(chain):
                     utxo['transaction_id'],
                     utxo['output_index']
                 )
-
                 utxos.pop(key, None)
 
     return list(utxos.values())

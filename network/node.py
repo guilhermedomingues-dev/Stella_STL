@@ -16,13 +16,13 @@ class Node:
     def broadcast_transaction(self, transaction):
         for node in self.nodes:
             requests.post(
-                f'{node}/transactions/receive',
+                f'http://{node}/transactions/receive',
                 json=transaction
             )
 
     def broadcast_block(self, block):
         for node in self.nodes:
             requests.post(
-                f'{node}/blocks/receive',
+                f'http://{node}/blocks/receive',
                 json=block
             )

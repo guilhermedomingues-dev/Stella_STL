@@ -57,11 +57,14 @@ def get_total_issued(chain):
     return total
 
 
-def valid_coinbase(transaction, chain, block_transactions=None):
+def valid_coinbase(transaction, chain, block_index, block_transactions=None):
     if transaction.get('type') != 'coinbase':
         return False
 
     if transaction.get('inputs') != []:
+        return False
+
+    if transaction.get('block_index') != block_index:
         return False
 
     outputs = transaction.get('outputs', [])
@@ -70,9 +73,6 @@ def valid_coinbase(transaction, chain, block_transactions=None):
         return False
 
     reward = outputs[0].get('amount')
-
-    block_index = transaction.get('block_index')
-
     expected_reward = get_block_reward(block_index)
 
     total_fees = 0

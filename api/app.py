@@ -346,6 +346,8 @@ def new_transaction():
 
     blockchain.current_transactions.append(transaction)
 
+    blockchain.node.broadcast_transaction(transaction)
+
     index = blockchain.last_block['index'] + 1
 
     response = {'message': f'Transaction will be added to Block {index}'}
@@ -520,16 +522,21 @@ def get_block(index):
 
 @app.route('/transactions/send', methods=['POST'])
 def send_stl():
+    if 'user_id' not in session or 'login_id' not in session:
+        return jsonify({
+            'message': 'Authentication required'
+        }), 401
+
     values = request.get_json()
 
-    required = ['user_id', 'login_id', 'recipient', 'amount']
+    required = ['recipient', 'amount']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
 
     wallet = get_user_wallet(
-        values['user_id'],
-        values['login_id']
+        session['user_id'],
+        session['login_id']
     )
 
     if wallet is None:
@@ -553,6 +560,8 @@ def send_stl():
     transaction = wallet.sign_transaction(transaction)
 
     blockchain.current_transactions.append(transaction)
+
+    blockchain.node.broadcast_transaction(transaction)
 
     return jsonify({
         'message': 'Transaction received',
