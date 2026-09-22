@@ -17,7 +17,8 @@ from persistence.database import (
     save_mempool_transaction,
     remove_mempool_transaction,
     replace_utxos,
-    clear_mempool
+    clear_mempool,
+    replace_blocks
 )
 from core.transaction import create_coinbase_transaction, valid_transaction
 from core.utxo import create_utxo
@@ -323,6 +324,7 @@ class Blockchain:
         )
 
         self.chain = chain
+        replace_blocks(chain)
         self.available_utxos = rebuild_utxos(chain)
         self.spent_utxos = []
 

@@ -10,7 +10,6 @@ from core.auth import verify_password
 from persistence.database import remove_utxo
 from persistence.database import remove_utxo, save_mempool_transaction
 
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -123,6 +122,7 @@ def wallet():
 
     return render_template(
         'wallet.html',
+        username=session['username'],
         address=wallet.address
     )
 

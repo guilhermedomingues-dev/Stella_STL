@@ -425,3 +425,34 @@ def get_next_login_id():
     connection.close()
 
     return login_id
+
+def replace_blocks(chain):
+    connection = get_connection()
+
+    connection.execute(
+        "DELETE FROM blocks"
+    )
+
+    for block in chain:
+        connection.execute(
+            """
+            INSERT INTO blocks (
+                index_number,
+                timestamp,
+                transactions,
+                proof,
+                previous_hash
+            )
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (
+                block['index'],
+                block['timestamp'],
+                json.dumps(block['transactions']),
+                block['proof'],
+                str(block['previous_hash']),
+            )
+        )
+
+    connection.commit()
+    connection.close()
