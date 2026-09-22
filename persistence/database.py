@@ -117,6 +117,46 @@ def get_utxos():
         for row in rows
     ]
 
+def replace_utxos(utxos):
+    connection = get_connection()
+
+    connection.execute(
+        "DELETE FROM utxos"
+    )
+
+    for utxo in utxos:
+        connection.execute(
+            """
+            INSERT INTO utxos (
+                transaction_id,
+                output_index,
+                owner,
+                amount
+            )
+            VALUES (%s, %s, %s, %s)
+            """,
+            (
+                utxo['transaction_id'],
+                utxo['output_index'],
+                utxo['owner'],
+                utxo['amount'],
+            )
+        )
+
+    connection.commit()
+    connection.close()
+
+
+def clear_mempool():
+    connection = get_connection()
+
+    connection.execute(
+        "DELETE FROM mempool"
+    )
+
+    connection.commit()
+    connection.close()
+
 
 def rebuild_utxos(chain):
     utxos = {}
@@ -150,6 +190,61 @@ def rebuild_utxos(chain):
                 utxos.pop(key, None)
 
     return list(utxos.values())
+
+def save_mempool_transaction(transaction):
+    connection = get_connection()
+
+    connection.execute(
+        """
+        INSERT INTO mempool (
+            transaction_id,
+            transaction
+        )
+        VALUES (%s, %s)
+        ON CONFLICT (transaction_id) DO NOTHING
+        """,
+        (
+            transaction['transaction_id'],
+            json.dumps(transaction),
+        )
+    )
+
+    connection.commit()
+    connection.close()
+
+
+def remove_mempool_transaction(transaction_id):
+    connection = get_connection()
+
+    connection.execute(
+        """
+        DELETE FROM mempool
+        WHERE transaction_id = %s
+        """,
+        (transaction_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+
+def get_mempool_transactions():
+    connection = get_connection()
+
+    rows = connection.execute(
+        """
+        SELECT transaction
+        FROM mempool
+        ORDER BY transaction_id
+        """
+    ).fetchall()
+
+    connection.close()
+
+    return [
+        json.loads(row[0])
+        for row in rows
+    ]
 
 
 def initialize_database():
@@ -185,6 +280,15 @@ def initialize_database():
             address TEXT PRIMARY KEY,
             public_key TEXT NOT NULL,
             private_key TEXT NOT NULL
+        )
+        """
+    )
+
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS mempool (
+            transaction_id TEXT PRIMARY KEY,
+            transaction TEXT NOT NULL
         )
         """
     )

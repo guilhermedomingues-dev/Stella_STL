@@ -33,11 +33,13 @@ def proof_of_work(last_proof):
 
     return proof
 
-def valid_supply(current_supply):
-    return current_supply + BLOCK_REWARD <= MAX_SUPPLY
+def valid_supply(current_supply, block_index):
+    reward = get_block_reward(block_index)
 
-def valid_reward(reward):
-    return reward == BLOCK_REWARD
+    return current_supply + reward <= MAX_SUPPLY
+
+def valid_reward(reward, block_index):
+    return reward == get_block_reward(block_index)
 
 def valid_proof(last_proof, proof, difficulty):
     guess = f'{last_proof}{proof}'.encode()

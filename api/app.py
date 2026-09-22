@@ -1,17 +1,23 @@
+import os
 from core.block import new_block, hash
 from core.transaction import new_transaction as create_transaction, valid_transaction
 from core.blockchain import Blockchain
 from uuid import uuid4
 from persistence.user_repository import create_user, get_user_wallet, get_user
+from flask import Flask, jsonify, request, render_template, session, redirect, flash
 from core.utxo import get_balance
 from core.auth import verify_password
 from persistence.database import remove_utxo
+from persistence.database import remove_utxo, save_mempool_transaction
 
-from flask import Flask, jsonify, request, render_template, session, redirect, flash
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-app.secret_key = 'stella-secret-key'
+app.secret_key = os.environ['STELLA_SECRET_KEY']
 
 node_identifier = str(uuid4()).replace('-', '')
 
@@ -219,6 +225,8 @@ def send():
 
     blockchain.current_transactions.append(transaction)
 
+    save_mempool_transaction(transaction)
+
     return redirect('/send')
 
 @app.route('/receive')
@@ -346,6 +354,8 @@ def new_transaction():
 
     blockchain.current_transactions.append(transaction)
 
+    save_mempool_transaction(transaction)
+
     blockchain.node.broadcast_transaction(transaction)
 
     index = blockchain.last_block['index'] + 1
@@ -423,6 +433,8 @@ def receive_transaction():
         remove_utxo(utxo)
 
     blockchain.current_transactions.append(transaction)
+
+    save_mempool_transaction(transaction)
 
     return jsonify({
         'message': 'Transaction received'
@@ -560,6 +572,8 @@ def send_stl():
     transaction = wallet.sign_transaction(transaction)
 
     blockchain.current_transactions.append(transaction)
+
+    save_mempool_transaction(transaction)
 
     blockchain.node.broadcast_transaction(transaction)
 

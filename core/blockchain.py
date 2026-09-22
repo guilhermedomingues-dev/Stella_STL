@@ -12,7 +12,12 @@ from persistence.database import (
     get_utxos,
     save_utxo,
     remove_utxo,
-    rebuild_utxos
+    rebuild_utxos,
+    get_mempool_transactions,
+    save_mempool_transaction,
+    remove_mempool_transaction,
+    replace_utxos,
+    clear_mempool
 )
 from core.transaction import create_coinbase_transaction, valid_transaction
 from core.utxo import create_utxo
@@ -23,8 +28,8 @@ from network.consensus import register_node, resolve_conflicts
 class Blockchain:
     def __init__(self):
         initialize_database()
-        self.current_transactions = []
         self.chain = get_blocks()
+        self.current_transactions = get_mempool_transactions()
         self.available_utxos = get_utxos()
         self.nodes = set()
         self.node = Node()
@@ -41,6 +46,24 @@ class Blockchain:
                 )
             )
             save_block(self.chain[0])
+
+        for transaction in self.current_transactions:
+            for utxo in transaction.get('inputs', []):
+                if utxo in self.available_utxos:
+                    self.available_utxos.remove(utxo)
+
+                self.spent_utxos.append(utxo)
+
+            for index, output in enumerate(transaction.get('outputs', [])):
+                utxo = create_utxo(
+                    transaction['transaction_id'],
+                    index,
+                    output['owner'],
+                    output['amount']
+                )
+
+                if utxo not in self.available_utxos:
+                    self.available_utxos.append(utxo)
 
     def process_confirmed_transactions(self, transactions):
         for transaction in transactions:
@@ -63,6 +86,10 @@ class Blockchain:
 
                 save_utxo(utxo)
 
+            remove_mempool_transaction(
+                transaction['transaction_id']
+            )
+
     def add_block(self, proof, previous_hash=None):
         valid_transactions = list(self.current_transactions)
 
@@ -76,6 +103,7 @@ class Blockchain:
         self.chain.append(block)
         save_block(block)
         self.process_confirmed_transactions(block['transactions'])
+        self.current_transactions = []
         self.process_matured_coinbases()
         self.node.broadcast_block(block)
 
@@ -223,6 +251,14 @@ class Blockchain:
                 difficulty
             ):
                 return False
+            
+            if not valid_coinbase(
+                block['transactions'][0],
+                chain[:current_index],
+                block['index'],
+                block['transactions']
+            ):
+                return False
 
             validation_utxos = list(available_utxos)
 
@@ -255,6 +291,8 @@ class Blockchain:
             for transaction in block['transactions']
         }
 
+        transactions = list(self.current_transactions)
+
         for block in old_chain:
             for transaction in block['transactions']:
                 if transaction.get('type') == 'coinbase':
@@ -265,12 +303,10 @@ class Blockchain:
                 if transaction_id in new_transaction_ids:
                     continue
 
-                if valid_transaction(
-                    transaction,
-                    self.available_utxos,
-                    self.last_block['index'] + 1
-                ):
-                    self.current_transactions.append(transaction)
+                if transaction not in transactions:
+                    transactions.append(transaction)
+
+        return transactions
 
     def choose_chain(self, chain):
         if not self.valid_chain(chain):
@@ -281,10 +317,60 @@ class Blockchain:
 
         old_chain = self.chain
 
-        self.restore_orphaned_transactions(old_chain, chain)
+        transactions = self.restore_orphaned_transactions(
+            old_chain,
+            chain
+        )
 
         self.chain = chain
         self.available_utxos = rebuild_utxos(chain)
+        self.spent_utxos = []
+
+        new_transaction_ids = {
+            transaction.get('transaction_id')
+            for block in chain
+            for transaction in block['transactions']
+        }
+
+        self.current_transactions = []
+
+        for transaction in transactions:
+            transaction_id = transaction.get('transaction_id')
+
+            if transaction_id in new_transaction_ids:
+                continue
+
+            validation_utxos = list(self.available_utxos)
+
+            if not valid_transaction(
+                transaction,
+                validation_utxos,
+                self.last_block['index'] + 1
+            ):
+                continue
+
+            for utxo in transaction['inputs']:
+                self.available_utxos.remove(utxo)
+                self.spent_utxos.append(utxo)
+
+            for index, output in enumerate(transaction['outputs']):
+                self.available_utxos.append(
+                    create_utxo(
+                        transaction['transaction_id'],
+                        index,
+                        output['owner'],
+                        output['amount']
+                    )
+                )
+
+            self.current_transactions.append(transaction)
+
+        replace_utxos(self.available_utxos)
+
+        clear_mempool()
+
+        for transaction in self.current_transactions:
+            save_mempool_transaction(transaction)
 
         return True
 
@@ -310,6 +396,14 @@ class Blockchain:
             block,
             self.chain,
             validation_utxos
+        ):
+            return False
+        
+        if not valid_coinbase(
+            block['transactions'][0],
+            self.chain,
+            block['index'],
+            block['transactions']
         ):
             return False
 
@@ -346,6 +440,14 @@ class Blockchain:
             block_index
         )
 
+        if not valid_coinbase(
+            coinbase,
+            self.chain,
+            block_index,
+            self.current_transactions
+        ):
+            return None
+        
         if not valid_coinbase(
             coinbase,
             self.chain,

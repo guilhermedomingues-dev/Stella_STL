@@ -1,4 +1,5 @@
 flask>=3.0
 requests>=2.31
 cryptography
-psycopg
+psycopg[binary]
+python-dotenv
