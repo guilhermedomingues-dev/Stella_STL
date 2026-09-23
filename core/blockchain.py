@@ -450,14 +450,6 @@ class Blockchain:
             self.current_transactions
         ):
             return None
-        
-        if not valid_coinbase(
-            coinbase,
-            self.chain,
-            block_index,
-            self.current_transactions
-        ):
-            return None
 
         self.current_transactions.append(coinbase)
 
