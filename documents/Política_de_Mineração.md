@@ -180,7 +180,7 @@ As taxas, quando ativadas, possuem uma regra determinística e previsível, limi
 | Recompensa inicial | 50 STL por bloco |
 | Intervalo esperado | 10 minutos |
 | Halving | A cada 5 anos |
-| Blocos por período | 262.800 blocos |
+| Blocos por período | 200.000 blocos |
 | Dificuldade inicial | 4 zeros |
 | Maturação da recompensa | 6 blocos |
 | Unidade mínima | 1 Saint |
