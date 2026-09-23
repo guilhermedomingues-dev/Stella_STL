@@ -82,7 +82,7 @@ As regras econômicas devem ser executadas de forma determinística pelo protoco
 | Supply máximo | 20.000.000 STL |
 | Recompensa inicial | 50 STL por bloco |
 | Intervalo esperado | 10 minutos |
-| Halving | A cada 5 anos |
+| Halving | A cada 200.000 blocos |
 | Taxa durante a emissão | 0 STL |
 | Taxa após ativação | 0,1% do valor transferido |
 | Teto da taxa | 1 STL por transação |
