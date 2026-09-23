@@ -227,32 +227,33 @@ class Blockchain:
     def valid_chain(self, chain):
         if not chain:
             return False
-
+    
         last_block = chain[0]
-
+    
         if not valid_block(last_block):
             return False
-
+    
         current_index = 1
-        difficulty = get_difficulty(chain[:current_index])
         available_utxos = self._get_validation_utxos(chain[:1])
-
+    
         while current_index < len(chain):
             block = chain[current_index]
-
+    
             if not valid_block(block):
                 return False
-
+    
             if block['previous_hash'] != hash(last_block):
                 return False
-
+    
+            difficulty = get_difficulty(chain[:current_index])
+    
             if not valid_proof(
                 last_block['proof'],
                 block['proof'],
                 difficulty
             ):
                 return False
-            
+    
             if not valid_coinbase(
                 block['transactions'][0],
                 chain[:current_index],
@@ -260,16 +261,16 @@ class Blockchain:
                 block['transactions']
             ):
                 return False
-
+    
             validation_utxos = list(available_utxos)
-
+    
             if not self._valid_block_transactions(
                 block,
                 chain[:current_index],
                 validation_utxos
             ):
                 return False
-
+    
             available_utxos = validation_utxos
             last_block = block
             current_index += 1
