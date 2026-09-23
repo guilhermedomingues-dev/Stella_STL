@@ -1,18 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Minha conta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Stella</h1>
+    <main class="account-container">
 
-    <h2>Minha conta</h2>
+        <header class="account-header">
+            <h1>Stella</h1>
+            <p>Minha conta</p>
+        </header>
 
-    <p><strong>Nome de usuário:</strong> {{ username }}</p>
-    <p><strong>Login ID:</strong> {{ login_id }}</p>
+        <section class="account-details">
+
+            <div class="account-field">
+                <span>Nome de usuário</span>
+                <p>{{ username }}</p>
+            </div>
+
+            <div class="account-field">
+                <span>Login ID</span>
+                <p>{{ login_id }}</p>
+            </div>
+
+        </section>
+
+        <a class="back-link" href="/home">Voltar</a>
+
+        <a class="logout-link" href="/logout">Sair</a>
+
+    </main>
 
 </body>
+
 </html>

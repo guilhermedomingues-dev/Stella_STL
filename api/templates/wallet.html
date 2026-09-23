@@ -1,18 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Carteira</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Stella</h1>
+    <main class="wallet-container">
 
-    <h2>Minha carteira</h2>
+        <header class="wallet-header">
+            <h1>Stella</h1>
+            <p>Minha carteira</p>
+        </header>
 
-    <p><strong>Endereço:</strong></p>
-    <p>{{ address }}</p>
+        <section class="wallet-details">
+
+            <span>Endereço</span>
+
+            <p>{{ address }}</p>
+
+        </section>
+
+        <a class="back-link" href="/home">Voltar</a>
+
+    </main>
 
 </body>
+
 </html>

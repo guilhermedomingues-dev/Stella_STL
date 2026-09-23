@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Receber STL</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Stella</h1>
+    <main class="receive-container">
 
-    <h2>Receber STL</h2>
+        <header class="receive-header">
+            <h1>Stella</h1>
+            <p>Receber STL</p>
+        </header>
 
-    <p>Informe o seu ID para receber STL:</p>
+        <section class="receive-content">
 
-    <p><strong>{{ login_id }}</strong></p>
+            <p>Seu ID para receber STL:</p>
 
-    <p>Envie este ID para quem deseja enviar STL para você.</p>
+            <div class="receive-id">
+                {{ login_id }}
+            </div>
+
+            <p class="receive-description">
+                Informe este ID para quem deseja enviar STL para você.
+            </p>
+
+        </section>
+
+        <a class="back-link" href="/home">Voltar</a>
+
+    </main>
 
 </body>
+
 </html>

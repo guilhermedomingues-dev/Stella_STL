@@ -1,26 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Mineração</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Stella</h1>
+    <main class="mine-container">
 
-    <h2>Mineração</h2>
+        <header class="mine-header">
+            <h1>Stella</h1>
+            <p>Mineração</p>
+        </header>
 
-    <p>Carteira do minerador:</p>
-    <p>{{ address }}</p>
+        <section class="mine-content">
 
-    <form method="POST" action="/mine">
-        <button type="submit">Minerar bloco</button>
-    </form>
+            <p>Carteira do minerador:</p>
 
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+            <div class="mine-address">
+                {{ address }}
+            </div>
+
+            <form id="mine-form" method="POST" action="/mine">
+                <button id="mine-button" type="submit">
+                    <span id="mine-text">Minerar bloco</span>
+                    <span id="mine-loading" style="display: none;">
+                        Minerando<span class="loading-dots"></span>
+                    </span>
+                </button>
+            </form>
+
+            {% if message %}
+                <p class="mine-message">{{ message }}</p>
+            {% endif %}
+
+        </section>
+
+        <a class="back-link" href="/home">Voltar</a>
+
+    </main>
+
+    <script>
+        document.getElementById('mine-form').addEventListener('submit', function () {
+            document.getElementById('mine-button').disabled = true;
+            document.getElementById('mine-text').style.display = 'none';
+            document.getElementById('mine-loading').style.display = 'inline';
+        });
+    </script>
 
 </body>
+
 </html>

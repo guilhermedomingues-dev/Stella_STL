@@ -1,35 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — Stella</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
+    <main class="register-container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
-            <p>{{ message }}</p>
+        <p class="flash-message">{{ message }}</p>
         {% endfor %}
-    {% endwith %}
+        {% endwith %}
 
-    <h1>Stella</h1>
+        <header class="register-header">
+            <h1>Stella</h1>
+            <p>Entrar</p>
+        </header>
 
-    <h2>Entrar</h2>
+        <p id="login-message" class="flash-message" style="display: none;"></p>
 
-    <form method="POST" action="/login">
-        <label for="login_id">Login</label>
-        <input type="number" id="login_id" name="login_id" required>
+        <form class="register-form" id="login-form">
 
-        <label for="password">Senha</label>
-        <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="login_id">Login</label>
+                <input type="text" id="login_id" name="login_id" placeholder="Seu ID" required>
+            </div>
 
-        <button type="submit">Entrar</button>
-    </form>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Sua senha" required>
+            </div>
 
-    <a href="/register">
-        <button type="button">Criar uma conta</button>
-    </a>
+            <button type="submit">Entrar</button>
+
+        </form>
+
+        <a class="login-link" href="/register">
+            Criar uma conta
+        </a>
+
+        <script>
+            function showLoginMessage(message) {
+                const messageElement = document.getElementById('login-message');
+
+                messageElement.textContent = message;
+                messageElement.style.display = 'block';
+            }
+
+            document.getElementById('login-form').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    showLoginMessage(data.message);
+                    return;
+                }
+
+                window.location.href = data.redirect;
+            });
+        </script>
+
+    </main>
 
 </body>
+
 </html>

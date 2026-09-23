@@ -1,41 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Transações</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <h1>Stella</h1>
+    <main class="transactions-container">
 
-    <h2>Minhas transações</h2>
+        <header class="transactions-header">
+            <h1>Stella</h1>
+            <p>Minhas transações</p>
+        </header>
 
-    {% if transactions %}
-        {% for transaction in transactions %}
-            <div>
-                <p><strong>ID:</strong> {{ transaction['transaction_id'] }}</p>
+        <section class="transactions-list">
 
-                {% for output in transaction['outputs'] %}
-                    <p>
-                        <strong>Destinatário:</strong> {{ output['owner'] }}<br>
-                        <strong>Valor:</strong> {{ output['amount'] }} STL
-                    </p>
+            {% if transactions %}
+
+                {% for transaction in transactions %}
+
+                    <div class="transaction-item">
+
+                        <p class="transaction-id">
+                            {{ transaction['transaction_id'] }}
+                        </p>
+
+                        {% for output in transaction['outputs'] %}
+
+                            <div class="transaction-output">
+                                <p>
+                                    <span>Destinatário</span>
+                                    {{ output['owner'] }}
+                                </p>
+
+                                <p>
+                                    <span>Valor</span>
+                                    {{ output['amount'] }} STL
+                                </p>
+                            </div>
+
+                        {% endfor %}
+
+                        {% if transaction.get('fee', 0) > 0 %}
+                            <p class="transaction-fee">
+                                <span>Taxa</span>
+                                {{ transaction['fee'] }} STL
+                            </p>
+                        {% endif %}
+
+                    </div>
+
                 {% endfor %}
 
-                {% if transaction.get('fee', 0) > 0 %}
-                    <p>
-                        <strong>Taxa:</strong>
-                        {{ transaction['fee'] }} STL
-                    </p>
-                {% endif %}
+            {% else %}
 
-                <hr>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>Nenhuma transação encontrada.</p>
-    {% endif %}
+                <p class="empty-transactions">
+                    Nenhuma transação encontrada.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+        <a class="back-link" href="/home">Voltar</a>
+
+    </main>
 
 </body>
+
 </html>

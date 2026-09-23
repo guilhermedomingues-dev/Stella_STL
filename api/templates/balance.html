@@ -1,48 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Saldo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-    <a href="/home">←</a>
+    <main class="balance-container">
 
-    <h1>Stella</h1>
+        <header class="balance-header">
+            <h1>Stella</h1>
+            <p>Meu saldo</p>
+        </header>
 
-    <h2>Meu saldo</h2>
+        <section class="balance-main">
+            <h2>Saldo</h2>
+            <p>{{ balance }} STL</p>
+        </section>
 
-    <p><strong>Saldo:</strong> {{ balance }} STL</p>
+        <section class="balance-wallet">
+            <h2>Carteira</h2>
+            <p>{{ address }}</p>
+        </section>
 
-    <p><strong>Carteira:</strong></p>
-    <p>{{ address }}</p>
+        <section class="balance-history">
+            <h2>Extrato</h2>
 
-    <h3>Extrato</h3>
+            {% if history %}
 
-    {% if history %}
-        {% for transaction in history %}
-            <div>
-                <p>
-                    <strong>Transação:</strong>
-                    {{ transaction['transaction_id'] }}
+                {% for transaction in history %}
+
+                    <div class="transaction">
+                        <p class="transaction-id">
+                            {{ transaction['transaction_id'] }}
+                        </p>
+
+                        <p class="transaction-value">
+                            {% for output in transaction['outputs'] %}
+                                {% if output['owner'] == address %}
+                                    + {{ output['amount'] }} STL
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty-history">
+                    Nenhuma transação encontrada.
                 </p>
 
-                <p>
-                    <strong>Valor:</strong>
-                    {% for output in transaction['outputs'] %}
-                        {% if output['owner'] == address %}
-                            + {{ output['amount'] }} STL
-                        {% endif %}
-                    {% endfor %}
-                </p>
-            </div>
+            {% endif %}
+        </section>
 
-            <hr>
-        {% endfor %}
-    {% else %}
-        <p>Nenhuma transação encontrada.</p>
-    {% endif %}
+        <a class="back-link" href="/home">Voltar</a>
+
+    </main>
 
 </body>
+
 </html>

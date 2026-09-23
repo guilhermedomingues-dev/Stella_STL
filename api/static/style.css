@@ -101,3 +101,669 @@ body {
     color: #444;
     font-size: 15px;
 }
+
+.home-balance {
+    padding: 35px 0 45px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.home-balance h2 {
+    margin: 0 0 15px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.home-balance p {
+    margin: 0 0 18px;
+    color: #111;
+    font-size: 38px;
+}
+
+.balance-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.balance-links a {
+    color: #555;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.balance-links a:hover {
+    color: #111;
+}
+
+.home-actions {
+    padding: 35px 0;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.action-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.action-row:last-child {
+    margin-bottom: 0;
+}
+
+.action-button {
+    flex: 1;
+    padding: 13px 10px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff !important;
+    font-size: 16px !important;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 20px;
+}
+
+.action-button:hover {
+    background: #333;
+}
+
+.home-wallet {
+    padding: 25px 0;
+    border-top: 1px solid #ccc;
+    text-align: center;
+}
+
+.home-wallet h2 {
+    margin: 0 0 12px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.home-wallet p {
+    margin: 0 0 12px;
+    color: #555;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.home-wallet a {
+    color: #555;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.home-wallet a:hover {
+    color: #111;
+}
+
+.logout-link {
+    display: block;
+    margin-top: 25px;
+    color: #777;
+    font-size: 15px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #111;
+}
+
+.balance-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.balance-header {
+    margin-bottom: 40px;
+}
+
+.balance-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.balance-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.balance-main {
+    padding: 35px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.balance-main h2 {
+    margin: 0 0 15px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.balance-main p {
+    margin: 0;
+    font-size: 38px;
+}
+
+.balance-wallet {
+    padding: 25px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.balance-wallet h2,
+.balance-history h2 {
+    margin: 0 0 12px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.balance-wallet p {
+    margin: 0;
+    color: #555;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.balance-history {
+    padding: 30px 0;
+}
+
+.transaction {
+    padding: 18px 0;
+    border-top: 1px solid #ddd;
+}
+
+.transaction:first-of-type {
+    border-top: none;
+}
+
+.transaction-id {
+    margin: 0 0 8px;
+    color: #777;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.transaction-value {
+    margin: 0;
+    font-size: 17px;
+}
+
+.empty-history {
+    color: #666;
+    font-size: 16px;
+}
+
+.back-link {
+    display: block;
+    margin-top: 10px;
+    color: #555;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: #111;
+}
+
+.transactions-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.transactions-header {
+    margin-bottom: 40px;
+}
+
+.transactions-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.transactions-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.transactions-list {
+    border-top: 1px solid #ccc;
+}
+
+.transaction-item {
+    padding: 25px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-id {
+    margin: 0 0 20px;
+    color: #777;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.transaction-output {
+    margin-bottom: 15px;
+}
+
+.transaction-output p,
+.transaction-fee {
+    margin: 8px 0;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.transaction-output span,
+.transaction-fee span {
+    display: block;
+    margin-bottom: 3px;
+    color: #777;
+    font-size: 14px;
+}
+
+.transaction-fee {
+    margin-top: 20px;
+}
+
+.empty-transactions {
+    margin: 25px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.send-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 80px 30px;
+}
+
+.send-header {
+    margin-bottom: 45px;
+}
+
+.send-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.send-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.send-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.send-form button {
+    margin-top: 10px;
+    padding: 13px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-family: inherit;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.send-form button:hover {
+    background: #333;
+}
+
+.receive-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 80px 30px;
+}
+
+.receive-header {
+    margin-bottom: 45px;
+}
+
+.receive-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.receive-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.receive-content {
+    padding: 30px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.receive-content p {
+    margin: 0 0 20px;
+    color: #555;
+    font-size: 17px;
+}
+
+.receive-id {
+    margin: 25px 0;
+    color: #111;
+    font-size: 38px;
+}
+
+.receive-description {
+    margin-bottom: 0 !important;
+    color: #777 !important;
+    font-size: 15px !important;
+    line-height: 1.5;
+}
+
+.mine-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 80px 30px;
+}
+
+.mine-header {
+    margin-bottom: 45px;
+}
+
+.mine-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.mine-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.mine-content {
+    padding: 30px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.mine-content > p:first-child {
+    margin: 0 0 12px;
+    color: #555;
+    font-size: 17px;
+}
+
+.mine-address {
+    margin-bottom: 30px;
+    color: #555;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.mine-content form button {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-family: inherit;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.mine-content form button:hover {
+    background: #333;
+}
+
+.mine-message {
+    margin: 20px 0 0;
+    color: #555;
+    font-size: 16px;
+    text-align: center;
+}
+
+.mine-content form button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.loading-dots::after {
+    content: "";
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        content: "";
+    }
+
+    33% {
+        content: ".";
+    }
+
+    66% {
+        content: "..";
+    }
+
+    100% {
+        content: "...";
+    }
+}
+
+.blocks-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.blocks-header {
+    margin-bottom: 40px;
+}
+
+.blocks-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.blocks-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.blocks-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 35px;
+    border-bottom: 1px solid #ccc;
+}
+
+.blocks-form button {
+    margin-top: 10px;
+    padding: 13px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-family: inherit;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.blocks-form button:hover {
+    background: #333;
+}
+
+.block-details {
+    padding: 30px 0;
+}
+
+.block-field {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.block-field span {
+    display: block;
+    margin-bottom: 5px;
+    color: #777;
+    font-size: 14px;
+}
+
+.block-field p {
+    margin: 0;
+    color: #111;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.block-transactions {
+    padding-top: 30px;
+}
+
+.block-transactions h2 {
+    margin: 0 0 20px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.block-transactions pre {
+    margin: 0 0 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #f5f5f5;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 14px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.block-error {
+    margin: 25px 0 0;
+    color: #666;
+    font-size: 16px;
+    text-align: center;
+}
+
+.account-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 80px 30px;
+}
+
+.account-header {
+    margin-bottom: 40px;
+}
+
+.account-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.account-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.account-details {
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.account-field {
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.account-field:last-child {
+    border-bottom: none;
+}
+
+.account-field span {
+    display: block;
+    margin-bottom: 6px;
+    color: #777;
+    font-size: 14px;
+}
+
+.account-field p {
+    margin: 0;
+    color: #111;
+    font-size: 17px;
+}
+
+.wallet-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.wallet-header {
+    margin-bottom: 40px;
+}
+
+.wallet-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.wallet-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.wallet-details {
+    padding: 25px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.wallet-details span {
+    display: block;
+    margin-bottom: 10px;
+    color: #777;
+    font-size: 14px;
+}
+
+.wallet-details p {
+    margin: 0;
+    color: #111;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}

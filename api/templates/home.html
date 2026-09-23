@@ -5,64 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella — Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-    <p>{{ message }}</p>
-    {% endfor %}
-    {% endwith %}
+    <main class="home-container">
 
-    <header>
-        <h1>Stella</h1>
-        <p>Olá, {{ username }}</p>
-    </header>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <p class="flash-message">{{ message }}</p>
+        {% endfor %}
+        {% endwith %}
 
-    <main>
-
-        <section>
+        <section class="home-balance">
             <h2>Saldo</h2>
             <p>{{ balance }} STL</p>
-            <a href="/balance">Ver saldo</a>
+
+            <div class="balance-links">
+                <a href="/balance">Ver saldo</a>
+                <a href="/transactions">Transações</a>
+            </div>
         </section>
 
-        <section>
-            <h2>Carteira</h2>
-            <p>{{ address }}</p>
-            <a href="/wallet">Ver carteira</a>
+        <section class="home-actions">
+
+            <div class="action-row">
+                <a class="action-button" href="/send">Enviar STL</a>
+                <a class="action-button" href="/receive">Receber STL</a>
+                <a class="action-button" href="/mine">Minerar</a>
+            </div>
+
+            <div class="action-row">
+                <a class="action-button" href="/blocks">Blocos</a>
+                <a class="action-button" href="/account">Minha conta</a>
+                <a class="action-button" href="/wallet">Ver carteira</a>
+            </div>
+
         </section>
 
-        <section>
-            <h2>Ações</h2>
-
-            <a href="/send">Enviar STL</a>
-            <br>
-
-            <a href="/receive">Receber STL</a>
-            <br>
-
-            <a href="/mine">Minerar</a>
-        </section>
-
-        <section>
-            <h2>Stella</h2>
-
-            <a href="/transactions">Transações</a>
-            <br>
-
-            <a href="/blocks">Blocos</a>
-        </section>
-
-        <section>
-            <h2>Conta</h2>
-
-            <a href="/account">Minha conta</a>
-            <br>
-
-            <a href="/logout">Sair</a>
-        </section>
+        <a class="logout-link" href="/logout">Sair</a>
 
     </main>
 

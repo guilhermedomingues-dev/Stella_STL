@@ -7,8 +7,7 @@ from persistence.user_repository import create_user, get_user_wallet, get_user
 from flask import Flask, jsonify, request, render_template, session, redirect, flash
 from core.utxo import get_balance, create_utxo
 from core.auth import verify_password
-from persistence.database import remove_utxo
-from persistence.database import remove_utxo, save_mempool_transaction
+from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
 
 from dotenv import load_dotenv
 
@@ -50,19 +49,36 @@ def login():
     login_id = request.form['login_id']
     password = request.form['password']
 
+    try:
+        login_id = int(login_id)
+    except ValueError:
+        return jsonify({
+            'success': False,
+            'message': 'ID ou senha incorretos.'
+        }), 401
+
     user = get_user(login_id)
 
     if user is None:
-        return 'Login ID ou senha inválidos', 401
+        return jsonify({
+            'success': False,
+            'message': 'ID ou senha incorretos.'
+        }), 401
 
     if not verify_password(password, user[4]):
-        return 'Login ID ou senha inválidos', 401
+        return jsonify({
+            'success': False,
+            'message': 'ID ou senha incorretos.'
+        }), 401
 
     session['user_id'] = user[0]
     session['login_id'] = user[1]
     session['username'] = user[2]
 
-    return redirect('/home')
+    return jsonify({
+        'success': True,
+        'redirect': '/home'
+    })
 
 @app.route('/home')
 def home():
@@ -295,7 +311,11 @@ def blocks():
     )
 
     if block is None:
-        return 'Block not found', 404
+        return render_template(
+            'blocks.html',
+            block=None,
+            error='Bloco não encontrado.'
+        )
 
     return render_template(
         'blocks.html',
