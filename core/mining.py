@@ -21,18 +21,6 @@ def get_difficulty(chain):
 
     return max(1, round(difficulty))
 
-def proof_of_work(last_proof):
-    """
-    Procura uma prova cujo hash da prova anterior com a nova prova
-    comece com quatro zeros.
-    """
-    proof = 0
-
-    while valid_proof(last_proof, proof) is False:
-        proof += 1
-
-    return proof
-
 def valid_supply(current_supply, block_index):
     reward = get_block_reward(block_index)
 
