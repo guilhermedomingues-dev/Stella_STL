@@ -4,32 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro — Stella</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endwith %}
+    <main class="register-container">
 
-    <h1>Stella</h1>
+        <header class="register-header">
+            <h1>Stella</h1>
+            <p>Criar conta</p>
+        </header>
 
-    <h2>Criar conta</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="flash-message">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
 
-    <form method="POST" action="/register">
-        <label for="username">Nome de usuário</label>
-        <input type="text" id="username" name="username" required>
+        <form method="POST" action="/register" class="register-form">
 
-        <label for="password">Senha</label>
-        <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="username">Nome de usuário</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-        <button type="submit">Criar conta</button>
-    </form>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-    <a href="/login">
-        <button type="button">Já tenho uma conta</button>
-    </a>
+            <button type="submit">Criar conta</button>
+
+        </form>
+
+        <a href="/login" class="login-link">
+            Já tenho uma conta
+        </a>
+
+    </main>
 
 </body>
 </html>

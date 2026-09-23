@@ -556,7 +556,7 @@ Utilzar a VENV:
 - Desligar: deactivate
 - Deletar: Remove-Item -Recurse -Force venv
 
----
+------------------------------------------------------------------------
 
 DATABASE_URL=postgresql://postgres:020908postgre@localhost:5432/stella
 STELLA_SECRET_KEY=c8ada47074a8b306044193df3437eaa8c23a2afb7122a920b1d59ab1c3c19cdf
