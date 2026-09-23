@@ -5,7 +5,7 @@ from core.blockchain import Blockchain
 from uuid import uuid4
 from persistence.user_repository import create_user, get_user_wallet, get_user
 from flask import Flask, jsonify, request, render_template, session, redirect, flash
-from core.utxo import get_balance
+from core.utxo import get_balance, create_utxo
 from core.auth import verify_password
 from persistence.database import remove_utxo
 from persistence.database import remove_utxo, save_mempool_transaction
@@ -431,6 +431,17 @@ def receive_transaction():
     for utxo in transaction['inputs']:
         blockchain.available_utxos.remove(utxo)
         remove_utxo(utxo)
+
+    for index, output in enumerate(transaction['outputs']):
+        new_utxo = create_utxo(
+            transaction['transaction_id'],
+            index,
+            output['owner'],
+            output['amount']
+        )
+
+        blockchain.available_utxos.append(new_utxo)
+        save_utxo(new_utxo)
 
     blockchain.current_transactions.append(transaction)
 
