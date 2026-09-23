@@ -102,9 +102,9 @@ Consequentemente, o **32º halving será o último período com uma recompensa r
 
 No **33º halving**, o subsídio de mineração será encerrado e nenhum novo STL será criado como recompensa de bloco.
 
-Considerando um intervalo de cinco anos entre halvings, esse encerramento ocorrerá aproximadamente **165 anos após o início da emissão**, caso os períodos sejam completos.
+Considerando o intervalo de **200.000 blocos por halving** e o tempo-alvo de **10 minutos por bloco**, cada período entre halvings corresponde a aproximadamente **3,81 anos**. Dessa forma, o encerramento do subsídio ocorrerá aproximadamente **125,6 anos após o início da emissão**, caso os períodos sejam completos.
 
-O encerramento do subsídio não implica o encerramento da mineração. Os mineradores poderão continuar produzindo blocos e contribuindo para a segurança e continuidade da rede.
+O encerramento do subsídio não implica o encerramento da mineração. Os mineradores poderão continuar produzindo blocos e contribuindo para a segurança e continuidade da rede, sendo remunerados pelas taxas de transação quando estas estiverem ativas.
 
 ## 9. Taxas de transação
 
@@ -179,7 +179,7 @@ As taxas, quando ativadas, possuem uma regra determinística e previsível, limi
 | Supply máximo | 20.000.000 STL |
 | Recompensa inicial | 50 STL por bloco |
 | Intervalo esperado | 10 minutos |
-| Halving | A cada 5 anos |
+| Halving | A cada 200.000 blocos |
 | Blocos por período | 200.000 blocos |
 | Dificuldade inicial | 4 zeros |
 | Maturação da recompensa | 6 blocos |
