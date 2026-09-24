@@ -1,13 +1,15 @@
 import json
 import os
-import psycopg
 from pathlib import Path
+
+import psycopg
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from core.wallet import Wallet
-from core.crypto import get_public_key
+
 from config import MATURATION_BLOCKS
+from core.crypto import get_public_key
+from core.wallet import Wallet
 
 
 DATABASE_DIR = Path("database")
@@ -117,6 +119,7 @@ def get_utxos():
         for row in rows
     ]
 
+
 def replace_utxos(utxos):
     connection = get_connection()
 
@@ -190,6 +193,7 @@ def rebuild_utxos(chain):
                 utxos.pop(key, None)
 
     return list(utxos.values())
+
 
 def save_mempool_transaction(transaction):
     connection = get_connection()
@@ -425,6 +429,7 @@ def get_next_login_id():
     connection.close()
 
     return login_id
+
 
 def replace_blocks(chain):
     connection = get_connection()

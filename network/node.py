@@ -5,6 +5,7 @@ Identificação do nó atual na rede.
 import requests
 from uuid import uuid4
 
+
 class Node:
     def __init__(self):
         self.node_id = str(uuid4()).replace('-', '')

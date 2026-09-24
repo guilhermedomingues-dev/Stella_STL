@@ -3,7 +3,9 @@ Algoritmo de Proof of Work (PoW) da Stella.
 """
 
 import hashlib
+
 from config import MAX_SUPPLY, BLOCK_REWARD, DIFFICULTY, HALVING_INTERVAL, TARGET_BLOCK_TIME, MAX_HALVINGS
+
 
 def get_difficulty(chain):
     if len(chain) < 2:
@@ -21,19 +23,23 @@ def get_difficulty(chain):
 
     return max(1, round(difficulty))
 
+
 def valid_supply(current_supply, block_index):
     reward = get_block_reward(block_index)
 
     return current_supply + reward <= MAX_SUPPLY
 
+
 def valid_reward(reward, block_index):
     return reward == get_block_reward(block_index)
+
 
 def valid_proof(last_proof, proof, difficulty):
     guess = f'{last_proof}{proof}'.encode()
     guess_hash = hashlib.sha256(guess).hexdigest()
 
     return guess_hash[:difficulty] == '0' * difficulty
+
 
 def get_total_issued(chain):
     total = 0
@@ -81,8 +87,10 @@ def valid_coinbase(transaction, chain, block_index, block_transactions=None):
 
     return get_total_issued(chain) + expected_reward <= MAX_SUPPLY
 
+
 def get_halving_count(block_index):
     return (block_index - 1) // HALVING_INTERVAL
+
 
 def get_block_reward(block_index):
     halvings = get_halving_count(block_index)

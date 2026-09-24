@@ -1,6 +1,7 @@
-from core.crypto import generate_private_key, get_public_key
 from cryptography.hazmat.primitives import serialization, hashes
+
 from config import SAINTS_PER_STL
+from core.crypto import generate_private_key, get_public_key
 
 
 class Wallet:

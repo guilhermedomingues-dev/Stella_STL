@@ -1,15 +1,16 @@
 import os
-from core.block import new_block, hash
-from core.transaction import new_transaction as create_transaction, valid_transaction
-from core.blockchain import Blockchain
 from uuid import uuid4
-from persistence.user_repository import create_user, get_user_wallet, get_user
-from flask import Flask, jsonify, request, render_template, session, redirect, flash
-from core.utxo import get_balance, create_utxo
-from core.auth import verify_password
-from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
 
 from dotenv import load_dotenv
+from flask import Flask, jsonify, redirect, render_template, request, session
+
+from core.auth import verify_password
+from core.block import hash, new_block
+from core.blockchain import Blockchain
+from core.transaction import new_transaction as create_transaction, valid_transaction
+from core.utxo import create_utxo, get_balance
+from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
+from persistence.user_repository import create_user, get_user, get_user_wallet
 
 load_dotenv()
 
@@ -24,6 +25,15 @@ blockchain = Blockchain()
 available_utxos = []
 spent_utxos = []
 
+
+# Index
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+# Autenticação
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -80,6 +90,14 @@ def login():
         'redirect': '/home'
     })
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
+
+
+# Páginas
+
 @app.route('/home')
 def home():
     if 'user_id' not in session:
@@ -117,11 +135,6 @@ def account():
         username=session['username'],
         login_id=session['login_id']
     )
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/login')
 
 @app.route('/wallet')
 def wallet():
@@ -353,6 +366,8 @@ def mine():
     )
 
 
+# API - Transações
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
@@ -383,52 +398,6 @@ def new_transaction():
     response = {'message': f'Transaction will be added to Block {index}'}
 
     return jsonify(response), 201
-
-
-@app.route('/chain', methods=['GET'])
-def full_chain():
-    response = {
-        'chain': blockchain.chain,
-        'length': len(blockchain.chain)
-    }
-
-    return jsonify(response), 200
-
-
-@app.route('/nodes/register', methods=['POST'])
-def register_nodes():
-    values = request.get_json()
-
-    nodes = values.get('nodes')
-    if nodes is None:
-        return "Error: Please supply a valid list of nodes", 400
-
-    for node in nodes:
-        blockchain.register_node(node)
-
-    response = {
-        'message': 'New nodes have been added',
-        'total_nodes': list(blockchain.nodes),
-    }
-    return jsonify(response), 201
-
-
-@app.route('/nodes/resolve', methods=['GET'])
-def consensus():
-    replaced = blockchain.resolve_conflicts()
-
-    if replaced:
-        response = {
-            'message': 'Our chain was replaced',
-            'new_chain': blockchain.chain
-        }
-    else:
-        response = {
-            'message': 'Our chain is authoritative',
-            'chain': blockchain.chain
-        }
-
-    return jsonify(response), 200
 
 @app.route('/transactions/receive', methods=['POST'])
 def receive_transaction():
@@ -471,6 +440,79 @@ def receive_transaction():
         'message': 'Transaction received'
     }), 200
 
+@app.route('/transactions/send', methods=['POST'])
+def send_stl():
+    if 'user_id' not in session or 'login_id' not in session:
+        return jsonify({
+            'message': 'Authentication required'
+        }), 401
+
+    values = request.get_json()
+
+    required = ['recipient', 'amount']
+
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+
+    wallet = get_user_wallet(
+        session['user_id'],
+        session['login_id']
+    )
+
+    if wallet is None:
+        return jsonify({
+            'message': 'Wallet not found'
+        }), 404
+
+    transaction = wallet.create_transaction(
+        values['recipient'],
+        values['amount'],
+        blockchain.available_utxos,
+        blockchain.spent_utxos,
+        blockchain.last_block['index'] + 1
+    )
+
+    if transaction is None:
+        return jsonify({
+            'message': 'Invalid transaction'
+        }), 400
+
+    transaction = wallet.sign_transaction(transaction)
+
+    blockchain.current_transactions.append(transaction)
+
+    save_mempool_transaction(transaction)
+
+    blockchain.node.broadcast_transaction(transaction)
+
+    return jsonify({
+        'message': 'Transaction received',
+        'transaction': transaction
+    }), 201
+
+@app.route('/transactions/<transaction_id>', methods=['GET'])
+def get_transaction(transaction_id):
+    for block in blockchain.chain:
+        for transaction in block['transactions']:
+            if transaction.get('transaction_id') == transaction_id:
+                return jsonify(transaction), 200
+
+    return jsonify({
+        'message': 'Transaction not found'
+    }), 404
+
+
+# API - Blocos
+
+@app.route('/chain', methods=['GET'])
+def full_chain():
+    response = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain)
+    }
+
+    return jsonify(response), 200
+
 @app.route('/blocks/receive', methods=['POST'])
 def receive_block():
     block = request.get_json()
@@ -485,6 +527,56 @@ def receive_block():
     return jsonify({
         'message': 'Block received'
     }), 200
+
+@app.route('/blocks/<int:index>', methods=['GET'])
+def get_block(index):
+    for block in blockchain.chain:
+        if block['index'] == index:
+            return jsonify(block), 200
+
+    return jsonify({
+        'message': 'Block not found'
+    }), 404
+
+
+# API - Nós da rede
+
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+    values = request.get_json()
+
+    nodes = values.get('nodes')
+    if nodes is None:
+        return "Error: Please supply a valid list of nodes", 400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        'message': 'New nodes have been added',
+        'total_nodes': list(blockchain.nodes),
+    }
+    return jsonify(response), 201
+
+@app.route('/nodes/resolve', methods=['GET'])
+def consensus():
+    replaced = blockchain.resolve_conflicts()
+
+    if replaced:
+        response = {
+            'message': 'Our chain was replaced',
+            'new_chain': blockchain.chain
+        }
+    else:
+        response = {
+            'message': 'Our chain is authoritative',
+            'chain': blockchain.chain
+        }
+
+    return jsonify(response), 200
+
+
+# API - Usuários e carteiras
 
 @app.route('/users', methods=['POST'])
 def create_user_api():
@@ -542,80 +634,13 @@ def get_wallet_balance(user_id, login_id):
         'balance': balance
     }), 200
 
-@app.route('/transactions/<transaction_id>', methods=['GET'])
-def get_transaction(transaction_id):
-    for block in blockchain.chain:
-        for transaction in block['transactions']:
-            if transaction.get('transaction_id') == transaction_id:
-                return jsonify(transaction), 200
 
-    return jsonify({
-        'message': 'Transaction not found'
-    }), 404
-
-@app.route('/blocks/<int:index>', methods=['GET'])
-def get_block(index):
-    for block in blockchain.chain:
-        if block['index'] == index:
-            return jsonify(block), 200
-
-    return jsonify({
-        'message': 'Block not found'
-    }), 404
-
-@app.route('/transactions/send', methods=['POST'])
-def send_stl():
-    if 'user_id' not in session or 'login_id' not in session:
-        return jsonify({
-            'message': 'Authentication required'
-        }), 401
-
-    values = request.get_json()
-
-    required = ['recipient', 'amount']
-
-    if not all(k in values for k in required):
-        return 'Missing values', 400
-
-    wallet = get_user_wallet(
-        session['user_id'],
-        session['login_id']
-    )
-
-    if wallet is None:
-        return jsonify({
-            'message': 'Wallet not found'
-        }), 404
-
-    transaction = wallet.create_transaction(
-        values['recipient'],
-        values['amount'],
-        blockchain.available_utxos,
-        blockchain.spent_utxos,
-        blockchain.last_block['index'] + 1
-    )
-
-    if transaction is None:
-        return jsonify({
-            'message': 'Invalid transaction'
-        }), 400
-
-    transaction = wallet.sign_transaction(transaction)
-
-    blockchain.current_transactions.append(transaction)
-
-    save_mempool_transaction(transaction)
-
-    blockchain.node.broadcast_transaction(transaction)
-
-    return jsonify({
-        'message': 'Transaction received',
-        'transaction': transaction
-    }), 201
+# Debug
 
 @app.route('/debug/mempool', methods=['GET'])
 def debug_mempool():
     return jsonify(blockchain.current_transactions)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

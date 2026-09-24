@@ -4,6 +4,7 @@ Funções relacionadas ao modelo UTXO da Stella.
 
 from config import SAINTS_PER_STL
 
+
 def create_utxo(transaction_id, output_index, owner, amount):
     if not valid_amount(amount):
         return None
@@ -30,6 +31,7 @@ def get_balance(owner, available_utxos):
         for utxo in available_utxos
         if utxo['owner'] == owner
     )
+
 
 def valid_amount(amount):
     saints = round(amount * SAINTS_PER_STL)

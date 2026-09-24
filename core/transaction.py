@@ -3,12 +3,14 @@ Funções relacionadas à criação e assinatura de transações.
 """
 
 import hashlib
-from core.utxo import valid_utxo, consume_utxo, create_utxo
-from core.crypto import sign_message, verify_signature
-from config import SAINTS_PER_STL, TRANSACTION_FEE_RATE, MAX_TRANSACTION_FEE
-from core.mining import get_block_reward
+
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+
+from config import SAINTS_PER_STL, TRANSACTION_FEE_RATE, MAX_TRANSACTION_FEE
+from core.crypto import sign_message, verify_signature
+from core.mining import get_block_reward
+from core.utxo import valid_utxo, consume_utxo, create_utxo
 
 
 def create_output(owner, amount):

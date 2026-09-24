@@ -1,3 +1,4 @@
+from core.auth import hash_password
 from core.user import User
 from core.wallet import Wallet
 from persistence.database import (
@@ -7,7 +8,6 @@ from persistence.database import (
     get_wallet,
     initialize_database
 )
-from core.auth import hash_password
 
 
 class AuthenticatedUser:
