@@ -21,46 +21,46 @@
 
             {% if transactions %}
 
-                {% for transaction in transactions %}
+            {% for transaction in transactions %}
 
-                    <div class="transaction-item">
+            <div class="transaction-item">
 
-                        <p class="transaction-id">
-                            {{ transaction['transaction_id'] }}
-                        </p>
+                <p class="transaction-id">
+                    {{ transaction['transaction_id'] }}
+                </p>
 
-                        {% for output in transaction['outputs'] %}
+                {% for output in transaction['outputs'] %}
 
-                            <div class="transaction-output">
-                                <p>
-                                    <span>Destinatário</span>
-                                    {{ output['owner'] }}
-                                </p>
+                <div class="transaction-output">
+                    <p>
+                        <span>Destinatário</span>
+                        {{ output['owner'] }}
+                    </p>
 
-                                <p>
-                                    <span>Valor</span>
-                                    {{ output['amount'] }} STL
-                                </p>
-                            </div>
-
-                        {% endfor %}
-
-                        {% if transaction.get('fee', 0) > 0 %}
-                            <p class="transaction-fee">
-                                <span>Taxa</span>
-                                {{ transaction['fee'] }} STL
-                            </p>
-                        {% endif %}
-
-                    </div>
+                    <p>
+                        <span>Valor</span>
+                        {{ output['amount'] }} STL
+                    </p>
+                </div>
 
                 {% endfor %}
 
+                {% if transaction.get('fee', 0) > 0 %}
+                <p class="transaction-fee">
+                    <span>Taxa</span>
+                    {{ transaction['fee'] }} STL
+                </p>
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
             {% else %}
 
-                <p class="empty-transactions">
-                    Nenhuma transação encontrada.
-                </p>
+            <p class="empty-transactions">
+                Nenhuma transação encontrada.
+            </p>
 
             {% endif %}
 

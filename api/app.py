@@ -1,4 +1,5 @@
 import os
+import hashlib
 from uuid import uuid4
 
 from dotenv import load_dotenv
@@ -7,10 +8,14 @@ from flask import Flask, jsonify, redirect, render_template, request, session
 from core.auth import verify_password
 from core.block import hash, new_block
 from core.blockchain import Blockchain
-from core.transaction import new_transaction as create_transaction, valid_transaction
 from core.utxo import create_utxo, get_balance
 from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
 from persistence.user_repository import create_user, get_user, get_user_wallet
+from core.transaction import (
+    new_transaction as create_transaction,
+    valid_transaction,
+    calculate_transaction_fee
+)
 
 load_dotenv()
 
@@ -133,7 +138,7 @@ def account():
     return render_template(
         'account.html',
         username=session['username'],
-        login_id=session['login_id']
+        login_id=session['login_id'],
     )
 
 @app.route('/wallet')
@@ -215,8 +220,22 @@ def send():
     if request.method == 'GET':
         return render_template('send.html')
 
-    recipient_id = int(request.form['recipient'])
-    amount = float(request.form['amount'])
+    values = request.get_json()
+
+    if not values or 'recipient' not in values or 'amount' not in values:
+        return jsonify({
+            'success': False,
+            'message': 'Dados incompletos.'
+        }), 400
+
+    try:
+        recipient_id = int(values['recipient'])
+        amount = float(values['amount'])
+    except (ValueError, TypeError):
+        return jsonify({
+            'success': False,
+            'message': 'Dados inválidos.'
+        }), 400
 
     wallet = get_user_wallet(
         session['user_id'],
@@ -224,12 +243,18 @@ def send():
     )
 
     if wallet is None:
-        return 'Wallet not found', 404
+        return jsonify({
+            'success': False,
+            'message': 'Wallet not found.'
+        }), 404
 
     recipient = get_user(recipient_id)
 
     if recipient is None:
-        return 'Recipient not found', 404
+        return jsonify({
+            'success': False,
+            'message': 'Usuário não encontrado.'
+        }), 404
 
     recipient_wallet = get_user_wallet(
         recipient[0],
@@ -237,18 +262,40 @@ def send():
     )
 
     if recipient_wallet is None:
-        return 'Recipient wallet not found', 404
+        return jsonify({
+            'success': False,
+            'message': 'Wallet do destinatário não encontrada.'
+        }), 404
+
+    balance = get_balance(
+        wallet.address,
+        blockchain.available_utxos
+    )
+
+    fee = calculate_transaction_fee(
+        amount,
+        blockchain.last_block['index'] + 1
+    )
+
+    if balance < amount + fee:
+        return jsonify({
+            'success': False,
+            'message': 'Saldo insuficiente.'
+        }), 400
 
     transaction = wallet.create_transaction(
         recipient_wallet.address,
         amount,
         blockchain.available_utxos,
-        spent_utxos,
+        blockchain.spent_utxos,
         blockchain.last_block['index'] + 1
     )
 
     if transaction is None:
-        return 'Invalid transaction', 400
+        return jsonify({
+            'success': False,
+            'message': 'Transação inválida.'
+        }), 400
 
     transaction = wallet.sign_transaction(transaction)
 
@@ -256,7 +303,47 @@ def send():
 
     save_mempool_transaction(transaction)
 
-    return redirect('/send')
+    return jsonify({
+        'success': True,
+        'redirect': '/send'
+    }), 201
+
+@app.route('/send/recipient', methods=['POST'])
+def send_recipient():
+    if 'user_id' not in session:
+        return jsonify({
+            'success': False,
+            'message': 'Autenticação necessária.'
+        }), 401
+
+    values = request.get_json()
+
+    if not values or 'recipient' not in values:
+        return jsonify({
+            'success': False,
+            'message': 'Destinatário não informado.'
+        }), 400
+
+    try:
+        recipient_id = int(values['recipient'])
+    except (ValueError, TypeError):
+        return jsonify({
+            'success': False,
+            'message': 'ID do destinatário inválido.'
+        }), 400
+
+    recipient = get_user(recipient_id)
+
+    if recipient is None:
+        return jsonify({
+            'success': False,
+            'message': 'Usuário não encontrado.'
+        }), 404
+
+    return jsonify({
+        'success': True,
+        'username': recipient[2]
+    }), 200
 
 @app.route('/receive')
 def receive():
@@ -265,7 +352,8 @@ def receive():
 
     return render_template(
         'receive.html',
-        login_id=session['login_id']
+        login_id=session['login_id'],
+        username=session['username']
     )
 
 @app.route('/transactions')
@@ -636,10 +724,6 @@ def get_wallet_balance(user_id, login_id):
 
 
 # Debug
-
-@app.route('/debug/mempool', methods=['GET'])
-def debug_mempool():
-    return jsonify(blockchain.current_transactions)
 
 
 if __name__ == '__main__':

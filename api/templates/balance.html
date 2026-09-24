@@ -32,29 +32,29 @@
 
             {% if history %}
 
-                {% for transaction in history %}
+            {% for transaction in history %}
 
-                    <div class="transaction">
-                        <p class="transaction-id">
-                            {{ transaction['transaction_id'] }}
-                        </p>
+            <div class="transaction">
+                <p class="transaction-id">
+                    {{ transaction['transaction_id'] }}
+                </p>
 
-                        <p class="transaction-value">
-                            {% for output in transaction['outputs'] %}
-                                {% if output['owner'] == address %}
-                                    + {{ output['amount'] }} STL
-                                {% endif %}
-                            {% endfor %}
-                        </p>
-                    </div>
+                <p class="transaction-value">
+                    {% for output in transaction['outputs'] %}
+                    {% if output['owner'] == address %}
+                    + {{ output['amount'] }} STL
+                    {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
 
-                {% endfor %}
+            {% endfor %}
 
             {% else %}
 
-                <p class="empty-history">
-                    Nenhuma transação encontrada.
-                </p>
+            <p class="empty-history">
+                Nenhuma transação encontrada.
+            </p>
 
             {% endif %}
         </section>

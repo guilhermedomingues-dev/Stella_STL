@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro — Stella</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
     <main class="register-container">
@@ -16,9 +18,9 @@
         </header>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <p class="flash-message">{{ message }}</p>
-            {% endfor %}
+        {% for category, message in messages %}
+        <p class="flash-message">{{ message }}</p>
+        {% endfor %}
         {% endwith %}
 
         <form method="POST" action="/register" class="register-form">
@@ -33,6 +35,10 @@
                 <input type="password" id="password" name="password" required>
             </div>
 
+            <p class="register-disclaimer">
+                A senha não pode ser alterada ou recuperada. Guarde-a com cuidado.
+            </p>
+
             <button type="submit">Criar conta</button>
 
         </form>
@@ -44,4 +50,5 @@
     </main>
 
 </body>
+
 </html>

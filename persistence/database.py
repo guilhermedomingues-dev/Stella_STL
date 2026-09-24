@@ -1,6 +1,5 @@
 import json
 import os
-from pathlib import Path
 
 import psycopg
 from cryptography.fernet import Fernet
@@ -12,21 +11,12 @@ from core.crypto import get_public_key
 from core.wallet import Wallet
 
 
-DATABASE_DIR = Path("database")
-KEY_PATH = DATABASE_DIR / "wallet.key"
+def get_encryption_key():
+    return os.environ["STELLA_WALLET_KEY"].encode()
 
 
 def get_connection():
     return psycopg.connect(os.environ["DATABASE_URL"])
-
-
-def get_encryption_key():
-    DATABASE_DIR.mkdir(exist_ok=True)
-
-    if not KEY_PATH.exists():
-        KEY_PATH.write_bytes(Fernet.generate_key())
-
-    return KEY_PATH.read_bytes()
 
 
 def get_wallet(address):

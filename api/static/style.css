@@ -856,3 +856,76 @@ body {
     font-size: 12px;
     text-align: center;
 }
+
+#confirmation {
+    width: 100%;
+    text-align: center;
+    margin-top: 32px;
+}
+
+#confirmation-message {
+    margin: 0 0 24px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #111;
+}
+
+#confirm-send {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+#confirm-send:hover {
+    opacity: 0.8;
+}
+
+#confirm-send:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.institutional-footer {
+    margin-top: 45px;
+    text-align: center;
+}
+
+.institutional-developer {
+    margin: 0 0 12px;
+    color: #777;
+    font-size: 14px;
+}
+
+.institutional-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.institutional-links a {
+    color: #555;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.institutional-links a:hover {
+    color: #111;
+}
+
+.institutional-links span {
+    color: #999;
+    font-size: 14px;
+}
+
+.institutional-footer .institutional-disclaimer {
+    margin-top: 35px;
+}

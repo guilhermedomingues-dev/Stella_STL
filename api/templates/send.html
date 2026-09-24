@@ -23,7 +23,9 @@
             <p>Enviar STL</p>
         </header>
 
-        <form class="send-form" method="POST" action="/send">
+        <p id="send-message" class="flash-message" style="display: none;"></p>
+
+        <form class="send-form" id="send-form">
 
             <div class="form-group">
                 <label for="recipient">ID do destinatário</label>
@@ -35,14 +37,98 @@
                 <input type="number" id="amount" name="amount" min="1" step="any" required>
             </div>
 
-            <button type="submit">Enviar</button>
+            <button type="submit">Continuar</button>
 
         </form>
+
+        <section id="confirmation" style="display: none;">
+
+            <p id="confirmation-message"></p>
+
+            <button type="button" id="confirm-send">Confirmar envio</button>
+
+        </section>
 
         <a class="back-link" href="/home">Voltar</a>
 
     </main>
 
+    <script>
+        const form = document.getElementById('send-form');
+        const message = document.getElementById('send-message');
+        const confirmation = document.getElementById('confirmation');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        const confirmButton = document.getElementById('confirm-send');
+
+        let recipientId;
+        let amount;
+
+        function showMessage(text) {
+            message.textContent = text;
+            message.style.display = 'block';
+        }
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            message.style.display = 'none';
+
+            recipientId = document.getElementById('recipient').value;
+            amount = document.getElementById('amount').value;
+
+            const response = await fetch('/send/recipient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    recipient: recipientId
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                showMessage(data.message);
+                return;
+            }
+
+            confirmationMessage.textContent =
+                `Deseja enviar ${amount} STL para ${data.username}?`;
+
+            form.style.display = 'none';
+            confirmation.style.display = 'block';
+        });
+
+        confirmButton.addEventListener('click', async function () {
+            confirmButton.disabled = true;
+
+            const response = await fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    recipient: recipientId,
+                    amount: amount
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                confirmButton.disabled = false;
+                showMessage(data.message);
+                confirmation.style.display = 'none';
+                form.style.display = 'block';
+                return;
+            }
+
+            window.location.href = data.redirect;
+        });
+    </script>
+
 </body>
 
 </html>
+```
