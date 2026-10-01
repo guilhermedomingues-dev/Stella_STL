@@ -929,3 +929,120 @@ body {
 .institutional-footer .institutional-disclaimer {
     margin-top: 35px;
 }
+
+.delete-account-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.delete-account-header {
+    margin-bottom: 40px;
+}
+
+.delete-account-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.delete-account-header p {
+    margin: 0;
+    color: #666;
+    font-size: 20px;
+}
+
+.delete-account-warning {
+    padding: 30px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.delete-account-warning h2,
+.delete-account-recommendation h2 {
+    margin: 0 0 20px;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.delete-account-warning p,
+.delete-account-recommendation p {
+    margin: 0 0 18px;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.delete-account-warning p:last-child,
+.delete-account-recommendation p:last-child {
+    margin-bottom: 0;
+}
+
+.delete-account-warning ul {
+    margin: 20px 0;
+    padding-left: 25px;
+}
+
+.delete-account-warning li {
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.delete-account-recommendation {
+    padding: 30px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.delete-account-confirmation {
+    padding-top: 30px;
+}
+
+.delete-account-confirmation > p {
+    margin: 0 0 25px;
+    color: #111;
+    font-size: 17px;
+}
+
+.delete-account-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.delete-account-actions a,
+.delete-account-actions button {
+    flex: 1;
+    padding: 13px;
+    border: 1px solid #111;
+    font-family: inherit;
+    font-size: 17px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.delete-account-actions a {
+    background: transparent;
+    color: #111;
+    text-decoration: none;
+}
+
+.delete-account-actions a:hover {
+    background: #eee;
+}
+
+.delete-account-actions button {
+    background: #111;
+    color: #fff;
+}
+
+.delete-account-actions button:hover {
+    background: #333;
+}
+
+.delete-account-actions form {
+    display: flex;
+    flex: 1;
+}
