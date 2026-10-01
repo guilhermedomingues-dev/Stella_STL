@@ -271,6 +271,12 @@ def send():
             'message': 'Wallet do destinatário não encontrada.'
         }), 404
 
+    if recipient_wallet.address == wallet.address:
+        return jsonify({
+            'success': False,
+            'message': 'Você não pode enviar STL para si mesmo.'
+        }), 400
+
     balance = get_balance(
         wallet.address,
         blockchain.available_utxos
