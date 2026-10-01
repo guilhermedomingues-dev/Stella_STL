@@ -350,21 +350,38 @@ def send_recipient():
             'message': 'Usuário não encontrado.'
         }), 404
 
+    wallet = get_user_wallet(
+        session['user_id'],
+        session['login_id']
+    )
+
+    if wallet is None:
+        return jsonify({
+            'success': False,
+            'message': 'Wallet not found.'
+        }), 404
+
+    recipient_wallet = get_user_wallet(
+        recipient[0],
+        recipient[1]
+    )
+
+    if recipient_wallet is None:
+        return jsonify({
+            'success': False,
+            'message': 'Wallet do destinatário não encontrada.'
+        }), 404
+
+    if recipient_wallet.address == wallet.address:
+        return jsonify({
+            'success': False,
+            'message': 'Você não pode enviar STL para si mesmo.'
+        }), 400
+
     return jsonify({
         'success': True,
         'username': recipient[2]
     }), 200
-
-@app.route('/receive')
-def receive():
-    if 'user_id' not in session:
-        return redirect('/login')
-
-    return render_template(
-        'receive.html',
-        login_id=session['login_id'],
-        username=session['username']
-    )
 
 @app.route('/transactions')
 def transactions():
