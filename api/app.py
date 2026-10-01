@@ -10,7 +10,11 @@ from core.block import hash, new_block
 from core.blockchain import Blockchain
 from core.utxo import create_utxo, get_balance
 from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
-from persistence.user_repository import create_user, get_user, get_user_wallet
+from persistence.user_repository import (
+    get_user,
+    get_user_wallet,
+    get_user_by_wallet_address
+)
 from core.transaction import (
     new_transaction as create_transaction,
     valid_transaction,
@@ -385,7 +389,24 @@ def transactions():
             )
 
             if has_input or has_output:
-                transactions.append(transaction)
+                sender_username = None
+
+                inputs = transaction.get('inputs', [])
+
+                if inputs:
+                    sender_address = inputs[0].get('owner')
+
+                    if sender_address:
+                        sender_username = get_user_by_wallet_address(
+                            sender_address
+                        )
+
+                transaction_data = {
+                    'transaction': transaction,
+                    'sender_username': sender_username
+                }
+
+                transactions.append(transaction_data)
 
     return render_template(
         'transactions.html',
