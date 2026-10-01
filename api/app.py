@@ -11,6 +11,7 @@ from core.blockchain import Blockchain
 from core.utxo import create_utxo, get_balance
 from persistence.database import remove_utxo, save_mempool_transaction, save_utxo
 from persistence.user_repository import (
+    create_user,
     get_user,
     get_user_wallet,
     get_user_by_wallet_address
