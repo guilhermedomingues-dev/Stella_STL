@@ -85,7 +85,7 @@ def get_user(login_id):
         return None
 
     return row
-    
+
 
 def get_user_by_wallet_address(wallet_address):
     connection = get_connection()
