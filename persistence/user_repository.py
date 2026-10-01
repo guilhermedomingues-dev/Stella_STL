@@ -85,6 +85,26 @@ def get_user(login_id):
         return None
 
     return row
+    
+
+def get_user_by_wallet_address(wallet_address):
+    connection = get_connection()
+
+    row = connection.execute(
+        """
+        SELECT username
+        FROM users
+        WHERE wallet_address = %s
+        """,
+        (wallet_address,)
+    ).fetchone()
+
+    connection.close()
+
+    if row is None:
+        return None
+
+    return row[0]
 
 
 def get_user_wallet(user_id, login_id):
