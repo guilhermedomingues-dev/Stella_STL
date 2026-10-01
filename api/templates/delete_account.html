@@ -10,14 +10,19 @@
 
 <body>
 
-    <main>
-        <h1>Excluir conta</h1>
+    <main class="delete-account-container">
 
-        <section>
+        <header class="delete-account-header">
+            <h1>Excluir conta</h1>
+            <p>Exclusão permanente da sua conta Stella.</p>
+        </header>
+
+        <section class="delete-account-warning">
             <h2>Atenção</h2>
 
             <p>
-                A exclusão da sua conta é uma ação <strong>irreversível</strong>.
+                A exclusão da sua conta é uma ação
+                <strong>irreversível</strong>.
             </p>
 
             <p>
@@ -39,7 +44,7 @@
             </p>
         </section>
 
-        <section>
+        <section class="delete-account-recommendation">
             <h2>Antes de excluir sua conta</h2>
 
             <p>
@@ -54,17 +59,24 @@
             </p>
         </section>
 
-        <p>
-            Tem certeza de que deseja excluir permanentemente sua conta?
-        </p>
+        <section class="delete-account-confirmation">
+            <p>
+                Tem certeza de que deseja excluir permanentemente sua conta?
+            </p>
 
-        <div>
-            <a href="{{ url_for('account') }}">Cancelar</a>
+            <div class="delete-account-actions">
+                <a href="{{ url_for('account') }}">
+                    Cancelar
+                </a>
 
-            <form action="{{ url_for('delete_account') }}" method="POST">
-                <button type="submit">Excluir minha conta</button>
-            </form>
-        </div>
+                <form action="{{ url_for('delete_account') }}" method="POST">
+                    <button type="submit">
+                        Excluir minha conta
+                    </button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
 </body>
