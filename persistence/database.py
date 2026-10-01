@@ -451,3 +451,48 @@ def replace_blocks(chain):
 
     connection.commit()
     connection.close()
+
+def delete_user_account(user_id, wallet_address):
+    connection = get_connection()
+
+    try:
+        connection.execute(
+            """
+            DELETE FROM mempool
+            WHERE transaction::text LIKE %s
+            """,
+            (f'%{wallet_address}%',)
+        )
+
+        connection.execute(
+            """
+            DELETE FROM utxos
+            WHERE owner = %s
+            """,
+            (wallet_address,)
+        )
+
+        connection.execute(
+            """
+            DELETE FROM wallets
+            WHERE address = %s
+            """,
+            (wallet_address,)
+        )
+
+        connection.execute(
+            """
+            DELETE FROM users
+            WHERE user_id = %s
+            """,
+            (user_id,)
+        )
+
+        connection.commit()
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
