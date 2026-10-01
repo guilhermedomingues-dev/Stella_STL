@@ -146,6 +146,14 @@ def account():
         login_id=session['login_id'],
     )
 
+
+@app.route('/account/delete')
+def delete_account():
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    return render_template('delete_account.html')
+
 @app.route('/wallet')
 def wallet():
     if 'user_id' not in session:
