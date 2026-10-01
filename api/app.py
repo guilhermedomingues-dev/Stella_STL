@@ -383,6 +383,17 @@ def send_recipient():
         'username': recipient[2]
     }), 200
 
+@app.route('/receive')
+def receive():
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    return render_template(
+        'receive.html',
+        login_id=session['login_id'],
+        username=session['username']
+    )
+
 @app.route('/transactions')
 def transactions():
     if 'user_id' not in session:
