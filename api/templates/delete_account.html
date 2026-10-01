@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir conta - Stella</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <main>
+        <h1>Excluir conta</h1>
+
+        <section>
+            <h2>Atenção</h2>
+
+            <p>
+                A exclusão da sua conta é uma ação <strong>irreversível</strong>.
+            </p>
+
+            <p>
+                Ao excluir sua conta, todos os dados associados a ela serão
+                permanentemente removidos.
+            </p>
+
+            <ul>
+                <li>Sua conta será excluída.</li>
+                <li>Sua carteira será excluída.</li>
+                <li>Suas STL disponíveis serão perdidas.</li>
+                <li>Suas STL serão queimadas e não poderão mais ser utilizadas.</li>
+                <li>Você não poderá recuperar sua conta ou sua carteira.</li>
+            </ul>
+
+            <p>
+                O histórico da blockchain não será apagado. As transações já
+                registradas na blockchain permanecerão no histórico.
+            </p>
+        </section>
+
+        <section>
+            <h2>Antes de excluir sua conta</h2>
+
+            <p>
+                Se você possui STL em sua carteira, recomendamos que envie
+                essas moedas para outra pessoa antes de excluir sua conta.
+                Dessa forma, elas não serão perdidas.
+            </p>
+
+            <p>
+                Após a exclusão, as STL que permanecerem em sua carteira
+                serão queimadas permanentemente e não poderão ser recuperadas.
+            </p>
+        </section>
+
+        <p>
+            Tem certeza de que deseja excluir permanentemente sua conta?
+        </p>
+
+        <div>
+            <a href="{{ url_for('account') }}">Cancelar</a>
+
+            <form action="{{ url_for('delete_account') }}" method="POST">
+                <button type="submit">Excluir minha conta</button>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>
