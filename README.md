@@ -2,8 +2,6 @@
 
 Stella é uma moeda digital experimental baseada em **UTXO** e **Proof of Work**, construída do zero em Python. Ela funciona como um site: você cria uma conta, ganha uma carteira, minera blocos e envia STL para outros usuários, tudo pelo navegador.
 
-<!-- Adicione aqui o link do site: **Acesse a Stella:** https://... -->
-
 > **Projeto educacional.** A Stella foi criada para aprender e demonstrar como uma blockchain funciona por dentro. Não é um produto, não tem valor monetário e não deve ser usada para guardar ou movimentar valor real.
 
 ## Como usar
